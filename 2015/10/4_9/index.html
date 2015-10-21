@@ -1,0 +1,221 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Git的撤消操作 - 重置, 签出 和 撤消 | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com/">
+  
+  <meta name="description" content="Git的撤消操作 - 重置, 签出 和 撤消Git提供了多种修复你开发过程中的错误的方法. 方法的选择取决于你的情况: 包含有错误的文件是否提交了(commited); 如果你把它已经提交了, 那么你是否把有错误的提交已与其它人共享这也很重要.
+修复未提交文件中的错误(重置)如果你现在的工作目录(w">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Git的撤消操作 - 重置, 签出 和 撤消"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">Git的撤消操作 - 重置, 签出 和 撤消</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="Git的撤消操作_-_重置,_签出_和_撤消">Git的撤消操作 - 重置, 签出 和 撤消</h2><p>Git提供了多种修复你开发过程中的错误的方法. 方法的选择取决于你的情况: 包含有错误的文件是否提交了(commited); 如果你把它已经提交了, 那么你是否把有错误的提交已与其它人共享这也很重要.</p>
+<h3 id="修复未提交文件中的错误(重置)">修复未提交文件中的错误(重置)</h3><p>如果你现在的工作目录(work tree)里搞的一团乱麻, 但是你现在还没有把它们提交; 你可以通过下面的命令, 让工作目录回到上次提交时的状态(last committed state):</p>
+<pre><code>$ git <span class="operator"><span class="keyword">reset</span> <span class="comment">--hard HEAD</span></span>
+</code></pre><p>这条命令会把你工作目录中所有未提交的内容清空(当然这不包括未置于版控制下的文件 untracked files). 从另一种角度来说, 这会让”git diff” 和”git diff –cached”命令的显示法都变为空.</p>
+<p>如果你只是要恢复一个文件,如”hello.rb”, 你就要使用 linkgit:git-checkout[1]</p>
+<pre><code>$ git checkout <span class="comment">-- hello.rb</span>
+</code></pre><p>这条命令把hello.rb从HEAD中签出并且把它恢复成未修改时的样子.</p>
+<p>译者:上面二行和原文有出入，经验证是原文有误,所以我据正确的重写了.</p>
+<h3 id="修复已提交文件中的错误">修复已提交文件中的错误</h3><p>如果你已经做了一个提交(commit),但是你马上后悔了, 这里有两种截然不同的方法去处理这个问题:</p>
+<ol>
+<li>创建一个新的提交(commit), 在新的提交里撤消老的提交所作的修改. 这种作法在你已经把代码发布的情况下十分正确.</li>
+</ol>
+<p>2　你也可以去修改你的老提交(old commit). 但是如果你已经把代码发布了,那么千万别这么做; git不会处理项目的历史会改变的情况,如果一个分支的历史被改变了那以后就不能正常的合并.</p>
+<h4 id="创建新提交来修复错误">创建新提交来修复错误</h4><p>创建一个新的，撤消(revert)了前期修改的提交(commit)是很容易的; 只要把出错的提交(commit)的名字(reference)做为参数传给命令: linkgit:git-revert[1]就可以了; 下面这条命令就演示了如何撤消最近的一个提交:</p>
+<pre><code>$ git <span class="keyword">revert </span>HEAD
+</code></pre><p>这样就创建了一个撤消了上次提交(HEAD)的新提交, 你就有机会来修改新提交(new commit)里的提交注释信息.</p>
+<p>你也可撤消更早期的修改, 下面这条命令就是撤消“上上次”(next-to-last)的提交:</p>
+<pre><code>$ git <span class="keyword">revert </span>HEAD^
+</code></pre><p>在这种情况下,git尝试去撤消老的提交,然后留下完整的老提交前的版本.　如果你最近的修改和要撤消的修改有重叠(overlap),那么就会被要求手工解决冲突(conflicts),　就像解决合并(merge)时出现的冲突一样.</p>
+<p>译者注: git revert 其实不会直接创建一个提交(commit), 把撤消后的文件内容放到索引(index)里,你需要再执行git commit命令，它们才会成为真正的提交(commit).</p>
+<h4 id="修改提交来修复错误">修改提交来修复错误</h4><p>如果你刚刚做了某个提交(commit), 但是你又想马上修改这个提交;  linkgit:git-commit[1] 现在支持一个叫<strong>–amend</strong>的参数，它能让你修改刚才的这个提交(HEAD commit). 这项机制能让你在代码发布前,添加一些新的文件或是修改你的提交注释(commit message).</p>
+<p>如果你在老提交(older commit)里发现一个错误, 但是现在还没有发布到代码服务器上. 你可以使用 linkgit:git-rebase[1]命令的交互模式, “git rebase -i”会提示你在编辑中做相关的修改. 这样其实就是让你在rebase的过程来修改提交.</p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+			
+		
+	
+		
+			
+		
+	
+	
+		<li class="prev"><a href="/2015/10/4_8/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/4_10/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com/
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

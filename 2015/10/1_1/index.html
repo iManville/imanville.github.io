@@ -1,0 +1,202 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>欢迎使用Git | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com/">
+  
+  <meta name="description" content="欢迎使用Git欢迎来使用Git, 它是一个快速的分布式版本控制系统。
+这本书的目的是为那些初学者尽快熟悉Git，提供了一个良好的起点。
+此书将以介绍Git如何存储数据做为开始，让你了解它和其它版本控制系统有什么不同的背景。这大约要花你20分钟的时间。
+接下来，我们会讲一些Git的基本用法，那些你将在">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="欢迎使用Git"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">欢迎使用Git</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="欢迎使用Git">欢迎使用Git</h2><p>欢迎来使用Git, 它是一个快速的分布式版本控制系统。</p>
+<p>这本书的目的是为那些初学者尽快熟悉Git，提供了一个良好的起点。</p>
+<p>此书将以介绍Git如何存储数据做为开始，让你了解它和其它版本控制系统有什么不同的背景。这大约要花你20分钟的时间。</p>
+<p>接下来，我们会讲一些Git的<strong>基本用法</strong>，那些你将在90%的时间都在使用的命令。这些东东能给一个不错的使用的基础，也许这些命令就是你将使用的全部命令。这一节大约会花你30分钟的时间来读。</p>
+<p>其后，我们会讲一些稍微复杂的<strong>Git中级用法</strong>，这些用法也许会替换掉前面的基本用法。在你了解前面的基本用法后, 这些看起来像魔术一样的命令，你可能会用起来很爽。</p>
+<p>如果前面的这些东东你都掌握了，我们就会讲<strong>Git的高级用法</strong>，这些高级用法也许大多数人很少使用，但是在特定的环境会非常有用。学习这些用法（命令）,你将能获得全面的日常Git知识； 你将能成为Git大师。</p>
+<p>即然你学会了Git, 我们将会讲<strong>在Git中工作</strong>。我们将要学习 Git 配合脚本、部署工具、编辑器和其它工具一起工作。这一节将帮助你将Git 集成进你的工作环境。</p>
+<p>最后我们会有一系列的文章：<strong>low-level documentation</strong>，这些可能对那些Git hacker 有用，包括Git 的内核和协议如何运作等等。</p>
+<h3 id="反馈与参与">反馈与参与</h3><p>如果你发现本书的中任何错误，或者你想参与进此书的编写，你可以给我写email <a href="mailto:schancon@gmail.com" target="_blank" rel="external">schacon@gmail.com</a>, 或者你也可以用git得到本书的原始档案(source) <a href="http://github.com/schacon/gitbook" target="_blank" rel="external">http://github.com/schacon/gitbook</a>,然后给我发一个补丁(patch)或者一个pull请求</p>
+<p>译者注:如果有哪位朋友发现中译本的错误,或者是想参加此书的翻译，也可以给我发email <a href="mailto:liuhui998@gmail.com" target="_blank" rel="external">liuhui998@gmail.com</a>,或者你也可以用git得到本书的原始<br>档案(source) <a href="http://github.com/liuhui998/gitbook" target="_blank" rel="external">http://github.com/liuhui998/gitbook</a>,然后给我发一个补丁(patch)或者一个pull请求</p>
+<h3 id="参考">参考</h3><p>这本书由很多不同的资料汇聚起来，如果你更愿意阅读原始的文章和资料，下面提供了它们的url:</p>
+<ul>
+<li><a href="http://www.kernel.org/pub/software/scm/git/docs/user-manual.html" target="_blank" rel="external">Git User Manual</a></li>
+<li><a href="http://www.kernel.org/pub/software/scm/git/docs/gittutorial.html" target="_blank" rel="external">The Git Tutorial</a></li>
+<li><a href="http://www.kernel.org/pub/software/scm/git/docs/gittutorial-2.html" target="_blank" rel="external">The Git Tutorial pt 2</a></li>
+<li><a href="http://osteele.com/archives/2008/05/my-git-workflow" target="_blank" rel="external">“My Git Workflow” blog post</a></li>
+</ul>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+			
+		
+	
+		
+			
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+	
+		<li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/1_2/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com/
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

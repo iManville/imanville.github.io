@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>安装Git | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com/">
+  
+  <meta name="description" content="安装Git从源代码开始安装如果你在一个其基于Unix的系统中，你可以从Git的官网上Git Download Page下载它的源代码,并运行像下面的几行命令,你就可以安装:
+$ make prefix=/usr all ;# as yourself 
+$ make prefix=/usr insta">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="安装Git"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">安装Git</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="安装Git">安装Git</h2><h3 id="从源代码开始安装">从源代码开始安装</h3><p>如果你在一个其基于Unix的系统中，你可以从Git的官网上<a href="http://git-scm.com/download" target="_blank" rel="external">Git Download Page</a>下载它的源代码,并运行像下面的几行命令,你就可以安装:</p>
+<pre><code>$ <span class="keyword">make</span> prefix=/usr <span class="keyword">all</span> ;# <span class="keyword">as</span> yourself 
+$ <span class="keyword">make</span> prefix=/usr install ;# 以root权限运行
+</code></pre><p>你需一些库: <a href="http://expat.sourceforge.net/" target="_blank" rel="external">expat</a>,<a href="http://curl.linux-mirror.org" target="_blank" rel="external">curl</a>,<br><a href="http://www.zlib.net" target="_blank" rel="external">zlib</a>, 和 <a href="http://www.openssl.org" target="_blank" rel="external">openssl</a>; 除了expat 外，其它的可能在你的机器上都安装了。好了, 下面我们要去了解如何安装, 配置和使用Git.</p>
+<h3 id="Linux">Linux</h3><p>如果你用的是Linux，你可以用你的本地包管理系统(native package management system)来安装.</p>
+<pre><code>$ yum <span class="keyword">install</span> git-core  <span class="comment">#译者注，在redhat等系统下用yum</span>
+
+$ apt-get <span class="keyword">install</span> git-core  <span class="comment">#译者注，在debian, ubuntu等系统下用apt-get</span>
+</code></pre><p>如果你用上面的命令不起作用的话，你可以从下面两个站点下载 .deb 或 .rpm 包:</p>
+<p><a href="http://kernel.org/pub/software/scm/git/RPMS/" target="_blank" rel="external">RPM Packages</a></p>
+<p><a href="http://www.backports.org/debian/pool/main/g/git-core/" target="_blank" rel="external">Stable Debs</a></p>
+<p>如果你在Linux兴趣从源代码开始安装的话,下面的这篇文章也许对你有帮助:<br><a href="http://chrisolsen.org/2008/03/10/installing-git-on-ubuntu/" target="_blank" rel="external">Article: Installing Git on Ubuntu</a></p>
+<h3 id="Mac_10-4">Mac 10.4</h3><p>在Mac10.4和 10.5,如果你安装了MacPorts,你可以通过 <a href="http://www.macports.org/" target="_blank" rel="external">MacPorts</a>来安装Git。如果你没有安装MacPort, 你可以从 <a href="http://www.macports.org/install.php" target="_blank" rel="external">这里</a>来安装它.</p>
+<p>当你安装好MacPorts后，你可通过下面的命令来安装:</p>
+<pre><code>$ sudo <span class="foreign"><span class="keyword">port</span> install git-core</span>
+</code></pre><p>如果你想从源代码开始安装，下面这些文章可能对你有帮助:</p>
+<p><a href="http://rails.wincent.com/wiki/Installing_Git_1.5.2.3_on_Mac_OS_X_Tiger" target="_blank" rel="external">Article: Installing Git on Tiger</a></p>
+<p><a href="http://larrytheliquid.com/2007/12/29/compiling-git-and-git-svn-on-osx-tiger/" target="_blank" rel="external">Article: Installing Git and git-svn on Tiger from source</a></p>
+<h3 id="Mac_10-5">Mac 10.5</h3><p>在Leopard系统下，你也可以通过MacPorts来安装,但是你有一个新的选项:”一个漂亮的安装包”, 你可以从这里来下载:<a href="http://code.google.com/p/git-osx-installer/downloads/list?can=3" target="_blank" rel="external">Git OSX Installer</a></p>
+<p>如果你想从源代码开始安装，我希望下面些资料能对你有帮助:</p>
+<p><a href="http://solutions.treypiepmeier.com/2008/02/25/installing-git-on-os-x-leopard/" target="_blank" rel="external">Article: Installing Git on OSX Leopard</a></p>
+<p><a href="http://dysinger.net/2007/12/30/installing-git-on-mac-os-x-105-leopard/" target="_blank" rel="external">Article: Installing Git on OS 10.5</a></p>
+<h3 id="Windows">Windows</h3><p>在Windows下安装Git是很简单的，你只要下载<a href="http://code.google.com/p/msysgit/downloads/list" target="_blank" rel="external">msysGit</a>就可以了。</p>
+<p><em>Git on Windows</em> 这一章有一个”screencast”来在演示如何在windows下使用Git.</p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+	
+		<li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/2_2/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com/
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

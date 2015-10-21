@@ -1,0 +1,248 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Git树名 | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com/">
+  
+  <meta name="description" content="Git树名不用40个字节长的SHA串来表示一个提交(commit)或是其它git对象, 有很多种名字表示方法.　在Git里,这些名字就叫’树名’(treeish).
+译者注:我目前没有想到更好的中文名字,就先叫’树名’.
+Sha短名如果你的一个提交(commit)的sha名字是 ‘980e3ccda">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Git树名"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">Git树名</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="Git树名">Git树名</h2><p>不用40个字节长的SHA串来表示一个提交(commit)或是其它git对象, 有很多种名字表示方法.　在Git里,这些名字就叫’树名’(treeish).</p>
+<p>译者注:我目前没有想到更好的中文名字,就先叫’树名’.</p>
+<h3 id="Sha短名">Sha短名</h3><p>如果你的一个提交(commit)的sha名字是 ‘<code>980e3ccdaac54a0d4de358f3fe5d718027d96aae</code>‘, git会把下面的串视为等价的:</p>
+<pre><code><span class="number">980e3</span>ccdaac54a0d4de358f3fe5d718027d96aae
+<span class="number">980e3</span>ccdaac54a0d4
+<span class="number">980e3</span>cc
+</code></pre><p>只要你的‘sha短名’(Partial Sha)是不重复的(unique)，它就不会和其它名字冲突(如果你使用了5个字节以上那是很难重复的)，git也会把‘sha短名’(Partial Sha)自动补全.</p>
+<h3 id="分支,_Remote_或_标签">分支, Remote 或 标签</h3><p>你可以使用分支,remote或标签名来代替SHA串名, 它们只是指向某个对象的指针. 假设你的master分支目前在提交(commit):’980e3’上, 现在把它推送(push)到origin上并把它命名为标签’v1.0’, 那么下面的串都会被git视为等价的:</p>
+<pre><code><span class="number">980</span>e3ccdaac54a0d4de358f3fe5d718027d96aae
+origin/<span class="keyword">master</span>
+<span class="title">refs</span>/remotes/origin/<span class="keyword">master</span>
+<span class="title">master</span>
+refs/heads/<span class="keyword">master</span>
+<span class="title">v1</span>.<span class="number">0</span>
+refs/tags/v1.<span class="number">0</span>
+</code></pre><p>这意味着你执行下面的两条命令会有同样的输出:</p>
+<pre><code>$ git <span class="built_in">log</span> master
+
+$ git <span class="built_in">log</span> refs/tags/v1<span class="number">.0</span>
+</code></pre><h3 id="日期标识符">日期标识符</h3><p>The Ref Log that git keeps will allow you to do some relative stuff locally,<br>such as: </p>
+<p>Git的引用日志(Ref Log)可以让你做一些‘相对’查询操作:</p>
+<pre><code><span class="literal">master</span>@{yesterday}
+
+<span class="literal">master</span>@{<span class="number">1</span> month ago}
+</code></pre><p>上面的第一条命令是:’master分支的昨天状态(head)的缩写‘. 注意: 即使在两个有相同master分支指向的仓库上执行这条命令, 但是如果这个两个仓库在不同机器上,　那么执行结果也很可能会不一样.</p>
+<p>译者注:因为两个不同机器上的仓库的历史一般很难相同.</p>
+<h3 id="顺序标识符">顺序标识符</h3><p>这种格式用来表达某点前面的第N个提交(ref).</p>
+<pre><code>master@{<span class="number">5</span>}
+</code></pre><p>上面的表达式代表着master前面的第5个提交(ref).</p>
+<h3 id="多个父对象">多个父对象</h3><p>这能告诉你某个提交的第N个直接父提交(parent). 这种格式在合并提交(merge commits)时特别有用, 这样就可以使提交对象(commit object)有多于一个直接父对象(direct parent).</p>
+<p>译者注:假设master是由a和b两个分支合并的,那么 <code>master^1</code> 是指分支a, <code>master^2</code> 就是指分支b.</p>
+<pre><code>master^<span class="number">2</span>
+</code></pre><h3 id="波浪号">波浪号</h3><p>波浪号用来标识一个提交对象(commit object)的第N级嫡(祖)父对象(Nth grandparent). 例如:</p>
+<pre><code>master~<span class="number">2</span>
+</code></pre><p>就代表master所指向的提交对象的第一个父对象的第一个父对象(译者:你可以理解成是嫡系爷爷:)). 它和下面的这个表达式是等价的:</p>
+<pre><code><span class="literal">master</span>^^
+</code></pre><p>你也可以把这些‘标识符’(spec)叠加起来, 下面这个3个表达式都是指向同一个提交(commit):</p>
+<pre><code>master^^^^^^
+master~<span class="number">3</span>^~<span class="number">2</span>
+master~<span class="number">6</span>
+</code></pre><h3 id="树对象指针">树对象指针</h3><p>如果大家对第一章<a href="http://gitbook.liuhui998.com/1_2.html" target="_blank" rel="external">Git对象模型</a>还有印象的话, 就记得提交对象(commit object)是指向一个树对象(tree object)的. 假如你要得到一个提交对象(commit object)指向的树对象(tree object)的sha串名, 你就可以在‘树名’的后面加上’^{tree}’来得到它:</p>
+<pre><code><span class="literal">master</span>^{tree}
+</code></pre><h3 id="二进制标识符">二进制标识符</h3><p>如果你要某个二次制对象(blob)的sha串名,你可以在’树名’(treeish)后添加二次制对象(blob)对应的文件路径来得到它.</p>
+<pre><code>master:/path/<span class="keyword">to</span>/<span class="type">file</span>
+</code></pre><h3 id="区间">区间</h3><p>最后, 你可以用”..”来指两个提交(commit)之间的区间. 下面的命令会给出你在”7b593b5” 和”51bea1”之间除了”7b593b5外”的所有提交(commit)(注意:51bea1是最近的提交).</p>
+<pre><code><span class="number">7</span>b593b5.<span class="number">.51</span>bea1
+</code></pre><p>这会包括所有 <em>从</em> 7b593b开始的提交(commit).<br>译者注: 相当于 7b593b..HEAD</p>
+<pre><code><span class="number">7</span>b593b.. 
+</code></pre>	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+	
+		<li class="prev"><a href="/2015/10/4_5/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/4_7/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com/
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

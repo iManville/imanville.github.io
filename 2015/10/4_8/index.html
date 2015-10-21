@@ -1,0 +1,283 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>使用Git Grep进行搜索 | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com/">
+  
+  <meta name="description" content="使用Git Grep进行搜索用linkgit:git-grep[1] 命令查找Git库里面的某段文字是很方便的. 当然, 你也可以用unix下的’grep’命令进行搜索, 但是’git grep’命令能让你不用签出(checkout)历史文件, 就能查找它们.
+例如, 你要看 git.git　这个仓">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="使用Git Grep进行搜索"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">使用Git Grep进行搜索</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="使用Git_Grep进行搜索">使用Git Grep进行搜索</h2><p>用linkgit:git-grep[1] 命令查找Git库里面的某段文字是很方便的. 当然, 你也可以用unix下的’grep’命令进行搜索, 但是’git grep’命令能让你不用签出(checkout)历史文件, 就能查找它们.</p>
+<p>例如, 你要看 git.git　这个仓库里每个使用’xmmap’函数的地方, 你可以运行下面的命令:</p>
+<pre><code>$ git grep xmmap
+config.c:               contents = xmmap(<span class="literal">NULL</span>, contents_sz, PROT_READ,
+diff.c:         s-&gt;data = xmmap(<span class="literal">NULL</span>, s-&gt;size, PROT_READ, MAP_PRIVATE, fd, <span class="number">0</span>);
+git-compat-util.h:<span class="function"><span class="keyword">extern</span> <span class="keyword">void</span> *<span class="title">xmmap</span><span class="params">(<span class="keyword">void</span> *start, size_t length, <span class="keyword">int</span> prot, <span class="keyword">int</span> fla
+read-cache.c:   mmap = xmmap(<span class="literal">NULL</span>, mmap_size, PROT_READ | PROT_WRITE, MAP_PRIVATE,
+refs.c: log_mapped = xmmap(<span class="literal">NULL</span>, mapsz, PROT_READ, MAP_PRIVATE, logfd, <span class="number">0</span>)</span></span>;
+sha1_file.c:    <span class="built_in">map</span> = xmmap(<span class="literal">NULL</span>, mapsz, PROT_READ, MAP_PRIVATE, fd, <span class="number">0</span>);
+sha1_file.c:    idx_map = xmmap(<span class="literal">NULL</span>, idx_size, PROT_READ, MAP_PRIVATE, fd, <span class="number">0</span>);
+sha1_file.c:                    win-&gt;base = xmmap(<span class="literal">NULL</span>, win-&gt;len,
+sha1_file.c:                    <span class="built_in">map</span> = xmmap(<span class="literal">NULL</span>, *size, PROT_READ, MAP_PRIVATE, f
+sha1_file.c:            buf = xmmap(<span class="literal">NULL</span>, size, PROT_READ, MAP_PRIVATE, fd, <span class="number">0</span>);
+wrapper.c:<span class="function"><span class="keyword">void</span> *<span class="title">xmmap</span><span class="params">(<span class="keyword">void</span> *start, size_t length,</span></span>
+</code></pre><p>如果你要显示行号, 你可以添加’-n’选项:</p>
+<pre><code>$&gt;git grep -n xmmap
+config.c:<span class="number">1016</span>:          contents = xmmap(<span class="literal">NULL</span>, contents_sz, PROT_READ,
+diff.c:<span class="number">1833</span>:            s-&gt;data = xmmap(<span class="literal">NULL</span>, s-&gt;size, PROT_READ, MAP_PRIVATE, fd,
+git-compat-util.h:<span class="number">291</span>:<span class="function"><span class="keyword">extern</span> <span class="keyword">void</span> *<span class="title">xmmap</span><span class="params">(<span class="keyword">void</span> *start, size_t length, <span class="keyword">int</span> prot, <span class="keyword">int</span>
+read-cache.c:<span class="number">1178</span>:      mmap = xmmap(<span class="literal">NULL</span>, mmap_size, PROT_READ | PROT_WRITE, MAP_
+refs.c:<span class="number">1345</span>:    log_mapped = xmmap(<span class="literal">NULL</span>, mapsz, PROT_READ, MAP_PRIVATE, logfd, <span class="number">0</span>)</span></span>;
+sha1_file.c:<span class="number">377</span>:        <span class="built_in">map</span> = xmmap(<span class="literal">NULL</span>, mapsz, PROT_READ, MAP_PRIVATE, fd, <span class="number">0</span>);
+sha1_file.c:<span class="number">479</span>:        idx_map = xmmap(<span class="literal">NULL</span>, idx_size, PROT_READ, MAP_PRIVATE, fd
+sha1_file.c:<span class="number">780</span>:                        win-&gt;base = xmmap(<span class="literal">NULL</span>, win-&gt;len,
+sha1_file.c:<span class="number">1076</span>:                       <span class="built_in">map</span> = xmmap(<span class="literal">NULL</span>, *size, PROT_READ, MAP_PR
+sha1_file.c:<span class="number">2393</span>:               buf = xmmap(<span class="literal">NULL</span>, size, PROT_READ, MAP_PRIVATE, fd
+wrapper.c:<span class="number">89</span>:<span class="function"><span class="keyword">void</span> *<span class="title">xmmap</span><span class="params">(<span class="keyword">void</span> *start, size_t length,</span></span>
+</code></pre><p>如果我们想只显示文件名, 我们可以使用’–name-onley’选项:</p>
+<pre><code>$&gt;git grep --name-only xmmap
+config<span class="class">.c</span>
+diff<span class="class">.c</span>
+git-compat-util<span class="class">.h</span>
+read-cache<span class="class">.c</span>
+refs<span class="class">.c</span>
+sha1_file<span class="class">.c</span>
+wrapper.c
+</code></pre><p>我们可以用’-c’选项,可以查看每个文件里有多少行匹配内容(line matches):</p>
+<pre><code>$&gt;git grep -c xmmap
+config<span class="class">.c</span>:<span class="number">1</span>
+diff<span class="class">.c</span>:<span class="number">1</span>
+git-compat-util<span class="class">.h</span>:<span class="number">1</span>
+read-cache<span class="class">.c</span>:<span class="number">1</span>
+refs<span class="class">.c</span>:<span class="number">1</span>
+sha1_file<span class="class">.c</span>:<span class="number">5</span>
+wrapper<span class="class">.c</span>:<span class="number">1</span>
+</code></pre><p>现在, 如果我们要查找git仓库里某个特定版本里的内容, 我们可以像下面一样在命令行末尾加上标签名(tag reference):</p>
+<pre><code>$ git grep xmmap v1<span class="number">.5</span><span class="number">.0</span>
+v1<span class="number">.5</span><span class="number">.0</span>:config.c:                contents = xmmap(<span class="literal">NULL</span>, st.st_size, PROT_READ,
+v1<span class="number">.5</span><span class="number">.0</span>:diff.c:          s-&gt;data = xmmap(<span class="literal">NULL</span>, s-&gt;size, PROT_READ, MAP_PRIVATE, fd,
+v1<span class="number">.5</span><span class="number">.0</span>:git-compat-util.h:<span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">void</span> *<span class="title">xmmap</span><span class="params">(<span class="keyword">void</span> *start, size_t length,
+v1<span class="number">.5</span><span class="number">.0</span>:read-cache.c:                    cache_mmap = xmmap(<span class="literal">NULL</span>, cache_mmap_size, 
+v1<span class="number">.5</span><span class="number">.0</span>:refs.c:  log_mapped = xmmap(<span class="literal">NULL</span>, st.st_size, PROT_READ, MAP_PRIVATE, logfd
+v1<span class="number">.5</span><span class="number">.0</span>:sha1_file.c:     <span class="built_in">map</span> = xmmap(<span class="literal">NULL</span>, st.st_size, PROT_READ, MAP_PRIVATE, fd, 
+v1<span class="number">.5</span><span class="number">.0</span>:sha1_file.c:     idx_map = xmmap(<span class="literal">NULL</span>, idx_size, PROT_READ, MAP_PRIVATE, fd
+v1<span class="number">.5</span><span class="number">.0</span>:sha1_file.c:                     win-&gt;base = xmmap(<span class="literal">NULL</span>, win-&gt;len,
+v1<span class="number">.5</span><span class="number">.0</span>:sha1_file.c:     <span class="built_in">map</span> = xmmap(<span class="literal">NULL</span>, st.st_size, PROT_READ, MAP_PRIVATE, fd, 
+v1<span class="number">.5</span><span class="number">.0</span>:sha1_file.c:             buf = xmmap(<span class="literal">NULL</span>, size, PROT_READ, MAP_PRIVATE, fd</span></span>
+</code></pre><p>我可以看到”1.5.0版”和当前版本间一些区别: 在“1.5.0版”中, xmmap没有在wrapper.c中出现.</p>
+<p>我们也可以组合一些搜索条件, 下面的命令就是查找我们在仓库的哪个地方定义了’SORT_DIRENT’.</p>
+<pre><code>$ git grep -e <span class="string">'#define'</span> --and -e SORT_DIRENT
+builtin-fsck<span class="class">.c</span>:<span class="hexcolor">#def</span>ine SORT_DIRENT <span class="number">0</span>
+builtin-fsck<span class="class">.c</span>:<span class="hexcolor">#def</span>ine SORT_DIRENT <span class="number">1</span>
+</code></pre><p>我不但可以进行“与”(<em>both</em>)条件搜索操作，也可以进行”或”(<em>either</em>)条件搜索操作.</p>
+<pre><code>$ git grep --all-match -e <span class="string">'#define'</span> -e SORT_DIRENT
+builtin-fsck<span class="class">.c</span>:<span class="hexcolor">#def</span>ine REACHABLE <span class="number">0</span>x0001
+builtin-fsck<span class="class">.c</span>:<span class="hexcolor">#def</span>ine SEEN      <span class="number">0</span>x0002
+builtin-fsck<span class="class">.c</span>:<span class="hexcolor">#def</span>ine ERROR_OBJECT <span class="number">01</span>
+builtin-fsck<span class="class">.c</span>:<span class="hexcolor">#def</span>ine ERROR_REACHABLE <span class="number">02</span>
+builtin-fsck<span class="class">.c</span>:<span class="hexcolor">#def</span>ine SORT_DIRENT <span class="number">0</span>
+builtin-fsck<span class="class">.c</span>:<span class="hexcolor">#def</span>ine <span class="function"><span class="title">DIRENT_SORT_HINT</span><span class="params">(de)</span></span> <span class="number">0</span>
+builtin-fsck<span class="class">.c</span>:<span class="hexcolor">#def</span>ine SORT_DIRENT <span class="number">1</span>
+builtin-fsck<span class="class">.c</span>:<span class="hexcolor">#def</span>ine <span class="function"><span class="title">DIRENT_SORT_HINT</span><span class="params">(de)</span></span> ((de)-&gt;d_ino)
+builtin-fsck<span class="class">.c</span>:<span class="hexcolor">#def</span>ine MAX_SHA1_ENTRIES (<span class="number">1024</span>)
+builtin-fsck<span class="class">.c</span>: <span class="keyword">if</span> (SORT_DIRENT)
+</code></pre><p>我们也可以查找出符合一个条件(term)且符合两个条件(terms)之一的文件行.　例如我们要找出名字中含有‘PATH’或是’MAX’的常量定义:</p>
+<pre><code>$ git grep -e <span class="string">'#define'</span> --and \( -e PATH -e MAX \) 
+abspath<span class="class">.c</span>:<span class="hexcolor">#def</span>ine MAXDEPTH <span class="number">5</span>
+builtin-blame<span class="class">.c</span>:<span class="hexcolor">#def</span>ine MORE_THAN_ONE_PATH      (<span class="number">1</span>u&lt;&lt;<span class="number">13</span>)
+builtin-blame<span class="class">.c</span>:<span class="hexcolor">#def</span>ine MAXSG <span class="number">16</span>
+builtin-describe<span class="class">.c</span>:<span class="hexcolor">#def</span>ine MAX_TAGS     (FLAG_BITS - <span class="number">1</span>)
+builtin-fetch-pack<span class="class">.c</span>:<span class="hexcolor">#def</span>ine MAX_IN_VAIN <span class="number">256</span>
+builtin-fsck<span class="class">.c</span>:<span class="hexcolor">#def</span>ine MAX_SHA1_ENTRIES (<span class="number">1024</span>)
+...
+</code></pre><p>译者注:　就是”与”条件搜索和”或”条件搜索可以组合使用.    </p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+	
+		<li class="prev"><a href="/2015/10/4_7/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/4_9/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com/
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

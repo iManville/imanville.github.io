@@ -1,0 +1,357 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>查看历史 －Git日志 | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com/">
+  
+  <meta name="description" content="查看历史 －Git日志linkgit:git-log[1]命令可以显示所有的提交(commit)。 ……
+$ git log v2.5..        # commits since (not reachable from) v2.5
+$ git log test..master    # com">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="查看历史 －Git日志"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">查看历史 －Git日志</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="查看历史_－Git日志">查看历史 －Git日志</h2><p>linkgit:git-log[1]命令可以显示所有的提交(commit)。 ……</p>
+<pre><code>$ git <span class="keyword">log</span> v2.<span class="number">5</span>..        <span class="comment"># commits since (not reachable from) v2.5</span>
+$ git <span class="keyword">log</span> test..master    <span class="comment"># commits reachable from master but not test</span>
+$ git <span class="keyword">log</span> master..test    <span class="comment"># commits reachable from test but not master</span>
+$ git <span class="keyword">log</span> master...test    <span class="comment"># commits reachable from either test or</span>
+                        <span class="comment">#    master, but not both</span>
+$ git <span class="keyword">log</span> --since=<span class="string">"2 weeks ago"</span> <span class="comment"># commits from the last 2 weeks</span>
+$ git <span class="keyword">log</span> Makefile      <span class="comment"># commits that modify Makefile</span>
+$ git <span class="keyword">log</span> fs/            <span class="comment"># commits that modify any file under fs/</span>
+$ git <span class="keyword">log</span> -S<span class="string">'foo()'</span>        <span class="comment"># commits that add or remove any file data</span>
+                        <span class="comment"># matching the string 'foo()'</span>
+$ git <span class="keyword">log</span> --<span class="keyword">no</span>-merges    <span class="comment"># dont show merge commits</span>
+</code></pre><p>当然你也可以组合上面的命令选项；下面的命令就是找出所有从”v2.5“开<br>始在fs目录下的所有Makefile的修改.</p>
+<pre><code>$ git <span class="built_in">log</span> v2<span class="number">.5</span>.. Makefile fs/
+</code></pre><p>Git会根据git log命令的参数，按时间顺序显示相关的提交(commit)。</p>
+<pre><code><span class="operator"><span class="keyword">commit</span> f491239170cb1463c7c3cd970862d6de636ba787
+Author: Matt McCutchen &lt;matt@mattmccutchen.net&gt;
+<span class="built_in">Date</span>:   Thu Aug <span class="number">14</span> <span class="number">13</span>:<span class="number">37</span>:<span class="number">41</span> <span class="number">2008</span> -<span class="number">0400</span>
+
+    git <span class="keyword">format</span>-<span class="keyword">patch</span> documentation: clarify what <span class="comment">--cover-letter does</span>
+
+<span class="keyword">commit</span> <span class="number">7950659</span>dc9ef7f2b50b18010622299c508bfdfc3
+Author: Eric Raible &lt;raible@gmail.com&gt;
+<span class="built_in">Date</span>:   Thu Aug <span class="number">14</span> <span class="number">10</span>:<span class="number">12</span>:<span class="number">54</span> <span class="number">2008</span> -<span class="number">0700</span>
+
+    bash completion: <span class="string">'git apply'</span> should <span class="keyword">use</span> <span class="string">'fix'</span> <span class="keyword">not</span> <span class="string">'strip'</span>
+    Bring completion up <span class="keyword">to</span> <span class="built_in">date</span> <span class="keyword">with</span> the man page.</span>
+</code></pre><p>你也可以让git log显示补丁(patchs):</p>
+<pre><code>$ git log -p
+
+<span class="operator"><span class="keyword">commit</span> da9973c6f9600d90e64aac647f3ed22dfd692f70
+Author: Robert Schiele &lt;rschiele@gmail.com&gt;
+<span class="built_in">Date</span>:   Mon Aug <span class="number">18</span> <span class="number">16</span>:<span class="number">17</span>:<span class="number">04</span> <span class="number">2008</span> +<span class="number">0200</span>
+
+    adapt git-cvsserver manpage <span class="keyword">to</span> dash-free syntax
+
+diff <span class="comment">--git a/Documentation/git-cvsserver.txt b/Documentation/git-cvsserver.txt</span>
+<span class="keyword">index</span> c2d3c90.<span class="number">.785779</span><span class="keyword">e</span> <span class="number">100644</span>
+<span class="comment">--- a/Documentation/git-cvsserver.txt</span>
++++ b/Documentation/git-cvsserver.txt
+@@ -<span class="number">11</span>,<span class="number">7</span> +<span class="number">11</span>,<span class="number">7</span> @@ SYNOPSIS
+ SSH:
+
+ [verse]
+-<span class="keyword">export</span> CVS_SERVER=git-cvsserver
++<span class="keyword">export</span> CVS_SERVER=<span class="string">"git cvsserver"</span>
+ <span class="string">'cvs'</span> -<span class="keyword">d</span> :ext:<span class="keyword">user</span>@<span class="keyword">server</span>/<span class="keyword">path</span>/repo.git co &lt;HEAD_name&gt;
+
+ pserver (/etc/inetd.conf):</span>
+</code></pre><h3 id="日志统计">日志统计</h3><p>如果用<code>–stat</code>选项使用’git log’,它会显示在每个提交(commit)中哪些文件被修改了, 这些文件分别添加或删除了多少行内容.</p>
+<pre><code>$ git <span class="built_in">log</span> --stat
+
+commit dba9194a49452b5f093b96872e19c91b50e526aa
+Author: Junio C Hamano &lt;gitster@pobox.com&gt;
+Date:   Sun Aug <span class="number">17</span> <span class="number">15</span>:<span class="number">44</span>:<span class="number">11</span> <span class="number">2008</span> -<span class="number">0700</span>
+
+    Start <span class="number">1.6</span><span class="number">.0</span>.X maintenance series
+
+ Documentation/RelNotes-<span class="number">1.6</span><span class="number">.0</span><span class="number">.1</span>.txt |   <span class="number">15</span> +++++++++++++++
+ RelNotes                           |    <span class="number">2</span> +-
+ <span class="number">2</span> files changed, <span class="number">16</span> insertions(+), <span class="number">1</span> deletions(-)
+</code></pre><h3 id="格式化日志">格式化日志</h3><p>你可以按你的要求来格式化日志输出。‘–pretty’参数可以使用若干表现格式，如‘oneline’:</p>
+<pre><code>$ git log --pretty=oneline
+a<span class="number">6b444f57</span><span class="number">0558a5f31</span>ab508dc2a24dc<span class="number">34773825</span>f dammit, this is the second time this has reverted
+<span class="number">49d77f72783</span>e<span class="number">4e9f12d1</span>bbcacc<span class="number">45e7a15c80</span>0240 modified index to create refs/heads if it is not 
+9764edd90cf<span class="number">9a423c96</span><span class="number">98a2f1e81</span><span class="number">4f16f011123</span>8 Add diff-lcs dependency
+e1ba1e3ca<span class="number">83d53a2f16</span>b39c453fad<span class="number">33380f8d1</span>cc Add dependency for Open4
+<span class="number">0f87b4d90</span>20fff<span class="number">756c183231</span>06b3fd<span class="number">4e2f422135</span> merged recent changes: * accepts relative alt pat
+f0ce7d5979dfb<span class="number">0f415799</span>d<span class="number">086e14a8</span>d<span class="number">2f9653300</span> updated the Manifest file
+</code></pre><p>或者你也可以使用 ‘short’ 格式:</p>
+<pre><code>$ git log <span class="comment">--pretty=short</span>
+<span class="operator"><span class="keyword">commit</span> a6b444f570558a5f31ab508dc2a24dc34773825f
+Author: Scott Chacon &lt;schacon@gmail.com&gt;
+
+    dammit, this <span class="keyword">is</span> the <span class="keyword">second</span> <span class="keyword">time</span> this has reverted
+
+<span class="keyword">commit</span> <span class="number">49</span>d77f72783e4e9f12d1bbcacc45e7a15c800240
+Author: Scott Chacon &lt;schacon@gmail.com&gt;
+
+    modified <span class="keyword">index</span> <span class="keyword">to</span> <span class="keyword">create</span> refs/heads <span class="keyword">if</span> it <span class="keyword">is</span> <span class="keyword">not</span> there
+
+<span class="keyword">commit</span> <span class="number">9764</span>edd90cf9a423c9698a2f1e814f16f0111238
+Author: Hans Engel &lt;engel@engel.uk.<span class="keyword">to</span>&gt;
+
+    <span class="keyword">Add</span> diff-lcs dependency</span>
+</code></pre><p>你也可用‘medium’,’full’,’fuller’,’email’ 或‘raw’. 如果这些格式不完全符合你的相求，<br>你也可以用‘–pretty=format’参数(参见：linkgit:git-log[1])来创建你自己的”格式“.</p>
+<pre><code>$ git log --pretty=<span class="string">format:</span><span class="string">'%h was %an, %ar, message: %s'</span>
+a6b444f was Scott Chacon, <span class="number">5</span> days ago, <span class="string">message:</span> dammit, <span class="keyword">this</span> is the second time <span class="keyword">this</span> has re
+<span class="number">49</span>d77f7 was Scott Chacon, <span class="number">8</span> days ago, <span class="string">message:</span> modified index to create refs/heads <span class="keyword">if</span> it i
+<span class="number">9764</span>edd was Hans Engel, <span class="number">11</span> days ago, <span class="string">message:</span> Add diff-lcs dependency
+e1ba1e3 was Hans Engel, <span class="number">11</span> days ago, <span class="string">message:</span> Add dependency <span class="keyword">for</span> Open4
+<span class="number">0</span>f87b4d was Scott Chacon, <span class="number">12</span> days ago, <span class="string">message:</span> merged recent <span class="string">changes:</span>
+</code></pre><p>另一个有趣的事是：你可以用’–graph’选项来可视化你的提交图(commit graph),就像下面这样:</p>
+<pre><code>$ git log --pretty=format:<span class="string">'%h : %s'</span> --graph
+* <span class="number">2</span>d3acf9 : ignore errors <span class="keyword">from</span> SIGCHLD <span class="keyword">on</span> trap
+*   <span class="number">5</span>e3ee11 : Merge branch <span class="string">'master'</span> <span class="keyword">of</span> git:<span class="comment">//github.com/dustin/grit</span>
+|\  
+| * <span class="number">420</span>eac9 : Added a <span class="function"><span class="keyword">method</span> <span class="title">for</span> <span class="title">getting</span> <span class="title">the</span> <span class="title">current</span> <span class="title">branch</span>.
+* | 30<span class="title">e367c</span> :</span> timeout code <span class="keyword">and</span> tests
+* | <span class="number">5</span>a09431 : <span class="keyword">add</span> timeout protection <span class="keyword">to</span> grit
+* | e1193f8 : support <span class="keyword">for</span> heads <span class="keyword">with</span> slashes <span class="keyword">in</span> them
+|/  
+* d6016bc : <span class="keyword">require</span> time <span class="keyword">for</span> xmlschema
+</code></pre><p>它会用ASCII字符来画出一个很漂亮的提交历史(commit history)线。</p>
+<h3 id="日志排序">日志排序</h3><p>你也可以把日志记录按一些不同的顺序来显示。注意，git日志从最近的提交(commit)开始，并且从这里开始向它们父分支回溯。然而git历史可能包括多个互不关联的开发线路，这样有时提交(commits)显示出来就有点杂乱。</p>
+<p>如果你要指定一个特定的顺序，可以为git log命令添加顺序参数(ordering option).</p>
+<p>按默认情况，提交(commits)会按逆时间(reverse chronological)顺序显示。</p>
+<p>但是你也可以指定‘–topo-order’参数，这就会让提交(commits)按拓朴顺序来显示(就是子提交在它们的父提交前显示). 如果你用git log命令按拓朴顺序来显示git仓库的提交日志，你会看到“开发线”(development lines)都会集合在一起.</p>
+<pre><code>$ git log --pretty=format:'%h : %s' --topo-order --graph
+<span class="keyword">*</span>   4a904d7 : Merge branch 'idx2'
+|<span class="string">\  
+</span>|<span class="string"> *   dfeffce : merged in bryces changes and fixed some testing issues
+</span>|<span class="string"> </span>|<span class="string">\  
+</span>|<span class="string"> </span>|<span class="string"> * 23f4ecf : Clarify how to get a full count out of Repo#commits
+</span>|<span class="string"> </span>|<span class="string"> *   9d6d250 : Appropriate time-zone test fix from halorgium
+</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string">\  
+</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> * cec36f7 : Fix the to_hash test to run in US/Pacific time
+</span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> decfe7b : fixed manifest and grit.rb to make correct gemspec
+</span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> cd27d57 : added lib/grit/commit_stats.rb to the big list o' files
+</span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> 823a9d9 : cleared out errors by adding in Grit::Git#run method
+</span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string">   4eb3bf0 : resolved merge conflicts, hopefully amicably
+</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string">\ \  
+</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> d065e76 : empty commit to push project to runcoderun
+</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> 3fa3284 : whitespace
+</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> d01cffd : whitespace
+</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> 7c74272 : oops, update version here too
+</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> 13f8cc3 : push 0.8.3
+</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> 06bae5a : capture stderr and log it if debug is true when running commands
+</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> 0b5bedf : update history
+</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> d40e1f0 : some docs
+</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> ef8a23c : update gemspec to include the newly added files to manifest
+</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> 15dd347 : add missing files to manifest; add grit test
+</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> 3dabb6a : allow sending debug messages to a user defined logger if provided; tes
+</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> eac1c37 : pull out the date in this assertion and compare as xmlschemaw, to avoi
+</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> 0a7d387 : Removed debug print.
+</span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> 4d6b69c : Fixed to close opened file description.</span>
+</code></pre><p>你也可以用’–date-order’参数，这样显示提交日志的顺序主要按提交日期来排序. 这个参数和’–topo-order’有一点像，没有父分支会在它们的子分支前显示，但是其它的东东还是按交时间来排序显示。你会看到”开发线”(development lines)没有集合一起，它们会像并行开发(parallel development)一样跳来跳去的：</p>
+<pre><code>$ git log --pretty=format:'%h : %s' --date-order --graph
+<span class="keyword">*</span>   4a904d7 : Merge branch 'idx2'
+|<span class="string">\  
+* </span>|<span class="string"> 81a3e0d : updated packfile code to recognize index v2
+</span>|<span class="string"> *   dfeffce : merged in bryces changes and fixed some testing issues
+</span>|<span class="string"> </span>|<span class="string">\  
+</span>|<span class="string"> * </span>|<span class="string"> c615d80 : fixed a log issue
+</span>|<span class="string">/ /  
+</span>|<span class="string"> * 23f4ecf : Clarify how to get a full count out of Repo#commits
+</span>|<span class="string"> *   9d6d250 : Appropriate time-zone test fix from halorgium
+</span>|<span class="string"> </span>|<span class="string">\  
+</span>|<span class="string"> * </span>|<span class="string"> decfe7b : fixed manifest and grit.rb to make correct gemspec
+</span>|<span class="string"> * </span>|<span class="string"> cd27d57 : added lib/grit/commit_stats.rb to the big list o' file
+</span>|<span class="string"> * </span>|<span class="string"> 823a9d9 : cleared out errors by adding in Grit::Git#run method
+</span>|<span class="string"> * </span>|<span class="string">   4eb3bf0 : resolved merge conflicts, hopefully amicably
+</span>|<span class="string"> </span>|<span class="string">\ \  
+</span>|<span class="string"> * </span>|<span class="string"> </span>|<span class="string"> ba23640 : Fix CommitDb errors in test (was this the right fix?
+</span>|<span class="string"> * </span>|<span class="string"> </span>|<span class="string"> 4d8873e : test_commit no longer fails if you're not in PDT
+</span>|<span class="string"> * </span>|<span class="string"> </span>|<span class="string"> b3285ad : Use the appropriate method to find a first occurrenc
+</span>|<span class="string"> * </span>|<span class="string"> </span>|<span class="string"> 44dda6c : more cleanly accept separate options for initializin
+</span>|<span class="string"> * </span>|<span class="string"> </span>|<span class="string"> 839ba9f : needed to be able to ask Repo.new to work with a bar
+</span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> d065e76 : empty commit to push project to runcoderun
+* </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> 791ec6b : updated grit gemspec
+* </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> 756a947 : including code from github updates
+</span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> 3fa3284 : whitespace
+</span>|<span class="string"> </span>|<span class="string"> * </span>|<span class="string"> d01cffd : whitespace
+</span>|<span class="string"> * </span>|<span class="string"> </span>|<span class="string"> a0e4a3d : updated grit gemspec
+</span>|<span class="string"> * </span>|<span class="string"> </span>|<span class="string"> 7569d0d : including code from github updates</span>
+</code></pre><p>最后，你也可以用 ‘–reverse’参数来逆向显示所有日志。</p>
+<p><a href="&quot;GitCast #4: Git Log&quot;">gitcast:c4-git-log</a></p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+			
+		
+	
+		
+			
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+	
+		<li class="prev"><a href="/2015/10/3_3/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/3_5/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com/
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

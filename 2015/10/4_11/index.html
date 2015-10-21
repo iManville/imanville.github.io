@@ -1,0 +1,219 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>建立一个公共仓库 | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com/">
+  
+  <meta name="description" content="建立一个公共仓库假设你个人的仓库在目录 ~/proj. 我们先克隆一个新的“裸仓库“,并且创建一个标志文件告诉git-daemon这是个公共仓库.
+$ git clone --bare ~/proj proj.git
+$ touch proj.git/git-daemon-export-ok
+上面的">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="建立一个公共仓库"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">建立一个公共仓库</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="建立一个公共仓库">建立一个公共仓库</h2><p>假设你个人的仓库在目录 ~/proj. 我们先克隆一个新的“裸仓库“,并且创建一个标志文件告诉git-daemon这是个公共仓库.</p>
+<pre><code>$ git <span class="keyword">clone</span> <span class="title">--bare</span> ~/proj proj.git
+$ touch proj.git/git-daemon-export-ok
+</code></pre><p>上面的命令创建了一个proj.git目录, 这个目录里有一个“裸git仓库” – 即只有’.git’目录里的内容,没有任何签出(checked out)的文件.</p>
+<p>下一步就是你把这个 proj.git　目录拷到你打算用来托管公共仓库的主机上. 你可以用scp, rsync或其它任何方式.</p>
+<h3 id="通过git协议导出git仓库">通过git协议导出git仓库</h3><p>用git协议导出git仓库, 这是推荐的方法.</p>
+<p>如果这台服务器上有管理员，TA们要告诉你把仓库放在哪一个目录中, 并且“git:// URL”除仓库目录部分外是什么.</p>
+<p>你现在要做的是启动 linkgit:git-daemon[1]; 它会监听在 9418端口. 默认情况下它会允许你访问所有的git目录(看目录中是否有git-daemon-export-ok文件). 如果以某些目录做为 git-daemon 的参数, 那么 git-daemon 会限制用户通过git协议只能访问这些目录.</p>
+<p>你可以在inetd service模式下运行 git-daemon; 点击 linkgit:git-daemon[1]　可以查看帮助信息.</p>
+<h3 id="通过http协议导出git仓库">通过http协议导出git仓库</h3><p>git协议有不错的性能和可靠性, 但是如果主机上已经配好了一台web服务器,使用http协议(git over http)可能会更容易配置一些.</p>
+<p>你需要把新建的”裸仓库”放到Web服务器的可访问目录里, 同时做一些调整,以便让web客户端获得它们所需的额外信息.</p>
+<pre><code>$ mv proj<span class="class">.git</span> /home/you/public_html/proj<span class="class">.git</span>
+$ cd proj<span class="class">.git</span>
+$ git --bare update-server-info
+$ chmod a+x hooks/post-update
+</code></pre><p>(最后两行命令的解释可以点击这里查看: linkgit:git-update-server-info[1] &amp;  linkgit:githooks[5].)</p>
+<p>拼好了proj.git的web URL, 任何人都可以从这个地址来克隆(clone)或拉取(pull) git仓库内容. 下面这个命令就是例子:</p>
+<pre><code>$ git <span class="keyword">clone</span> <span class="title">http</span>://yourserver.com/~you/proj.git
+</code></pre>	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+	
+		<li class="prev"><a href="/2015/10/4_10/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/4_12/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com/
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

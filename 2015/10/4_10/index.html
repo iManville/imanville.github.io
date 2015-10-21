@@ -1,0 +1,218 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>维护Git | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com/">
+  
+  <meta name="description" content="维护Git保证良好的性能在大的仓库中, git靠压缩历史信息来节约磁盘和内存空间.
+压缩操作并不是自动进行的, 你需要手动执行 linkgit:git-gc[1]:
+$ git gc
+压缩操作比较耗时, 你运行linkgit:git-gc[1]命令最好是在你没有其它工作的时候.
+保持可靠性linkg">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="维护Git"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">维护Git</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="维护Git">维护Git</h2><h3 id="保证良好的性能">保证良好的性能</h3><p>在大的仓库中, git靠压缩历史信息来节约磁盘和内存空间.</p>
+<p>压缩操作并不是自动进行的, 你需要手动执行 linkgit:git-gc[1]:</p>
+<pre><code><span class="variable">$ </span>git gc
+</code></pre><p>压缩操作比较耗时, 你运行linkgit:git-gc[1]命令最好是在你没有其它工作的时候.</p>
+<h3 id="保持可靠性">保持可靠性</h3><p>linkgit:git-fsck[1] 运行一些仓库的一致性检查, 如果有任何问题就会报告. 这项操作也有点耗时, 通常报的警告就是“悬空对象”(dangling objects).</p>
+<pre><code>$ git fsck
+dangling commit <span class="number">7281251</span>ddd<span class="number">2a61e38657</span>c<span class="number">827739c57</span><span class="number">015671a6</span>b3
+dangling commit <span class="number">2706a059</span>f<span class="number">258c6b245</span>f298dc4ff2ccd30ec21a63
+dangling commit <span class="number">13472b7c4</span>b<span class="number">80851a1</span>bc<span class="number">551779171</span>dcb<span class="number">03655e9b5</span>
+dangling blob <span class="number">218761f9d90</span><span class="number">712d37a9</span>c<span class="number">5e36f406</span>f92202db07eb
+dangling commit bf<span class="number">093535a34</span>a<span class="number">4d35731</span>aa2bd90fe<span class="number">6b176302f14</span>f
+dangling commit 8e4bec7f2ddaa268bef<span class="number">999853c25</span><span class="number">755452100f8</span>e
+dangling tree d50bb86186bf<span class="number">27b681d25</span>af<span class="number">89d3b5b68</span><span class="number">382e4085</span>
+dangling tree b<span class="number">24c2473f1</span>fd<span class="number">3d91352a62</span>4795be<span class="number">026d64c88</span>41f
+...
+</code></pre><p>“悬空对象”(dangling objects)并不是问题, 最坏的情况只是它们多占了一些磁盘空间. 有时候它们是找回丢失的工作的最后一丝希望.</p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+			
+		
+	
+	
+		<li class="prev"><a href="/2015/10/4_9/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/4_11/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com/
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

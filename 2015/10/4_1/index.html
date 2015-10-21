@@ -1,0 +1,211 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>忽略某些文件 | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com/">
+  
+  <meta name="description" content="忽略某些文件项目中经常会生成一些Git系统不需要追踪(track)的文件。典型的是在编译生成过程中产生的文件或是编程器生成的临时备份文件。当然，你不追踪(track)这些文件，可以平时不用”git add”去把它们加到索引中。 但是这样会很快变成一件烦人的事，你发现项目中到处有未追踪(untrack">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="忽略某些文件"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">忽略某些文件</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="忽略某些文件">忽略某些文件</h2><p>项目中经常会生成一些Git系统不需要追踪(track)的文件。典型的是在编译生成过程中<br>产生的文件或是编程器生成的临时备份文件。当然，你不追踪(track)这些文件，可以<br>平时不用”git add”去把它们加到索引中。 但是这样会很快变成一件烦人的事，你发现<br>项目中到处有未追踪(untracked)的文件; 这样也使”<code>git add .</code>“ 和”<code>git commit -a</code>“<br>变得实际上没有用处，同时”<code>git status</code>“命令的输出也会有它们。</p>
+<p>你可以在你的顶层工作目录中添加一个叫”.gitignore”的文件，来告诉Git系统要忽略<br>掉哪些文件，下面是文件内容的示例:</p>
+<pre><code><span class="preprocessor"># 以'#' 开始的行，被视为注释.</span>
+<span class="preprocessor"># 忽略掉所有文件名是 foo.txt 的文件.</span>
+foo.txt
+<span class="preprocessor"># 忽略所有生成的 html 文件,</span>
+*.html
+<span class="preprocessor"># foo.html是手工维护的，所以例外.</span>
+!foo.html
+<span class="preprocessor">#  忽略所有.o 和 .a文件.</span>
+*.[oa]
+</code></pre><p>你可以点这里 linkgit:gitignore[5] 查看一下详细的语法解释. 你也可以把”.gitignore”<br>这个文件放到工作树(working tree)里的其它目录中，这就会在它和它的子目录起忽略(ignore)<br>指定文件的作用。<code>.gitignor</code>文件同样可以像其它文件一样加到项目仓库里( 直接用<br><code>git add .gitignore</code> 和 <code>git commit</code>等命令), 这样项目里的其它开发者也能共享同一套忽略<br>文件规则。</p>
+<p>如果你想忽略规则只对特定的仓库起作用,你可以把这些忽略规则写到你的仓库下<br>.git/info/exclude文件中，或是写在Git配置变量<code>core.excludesfile</code>中指定的<br>文件里。有些Git命令也可在命令行参数中指定忽略规则，你可以在这里:linkgit:gitignore[5]<br>查看详细的用法。</p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+	
+		<li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/4_2/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com/
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

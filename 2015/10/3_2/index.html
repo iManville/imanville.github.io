@@ -1,0 +1,214 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>正常的工作流程 | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com/">
+  
+  <meta name="description" content="正常的工作流程修改文件，将它们更新的内容添加到索引中.
+$ git add file1 file2 file3
+你现在为commit做好了准备，你可以使用 linkgit:git-diff[1] 命令再加上 –cached 参数 ,看看哪些文件将被提交(commit)。
+$ git diff --c">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="正常的工作流程"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">正常的工作流程</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="正常的工作流程">正常的工作流程</h2><p>修改文件，将它们更新的内容添加到索引中.</p>
+<pre><code>$ git <span class="keyword">add </span>file1 file2 file3
+</code></pre><p>你现在为commit做好了准备，你可以使用 linkgit:git-diff[1] 命令再加上 –cached 参数 ,看看哪些文件将被提交(commit)。</p>
+<pre><code>$ git diff <span class="comment">--cached</span>
+</code></pre><p>(如果没有–cached参数，git diff 会显示当前你所有已做的但没有加入到索引里的修改.)<br>你也可以用git status命令来获得当前项目的一个状况:</p>
+<pre><code>$ git status
+<span class="preprocessor"># On branch master</span>
+<span class="preprocessor"># Changes to be committed:</span>
+<span class="preprocessor">#   (use "git reset HEAD &lt;file&gt;..." to unstage)</span>
+<span class="preprocessor">#</span>
+<span class="preprocessor">#    modified:   file1</span>
+<span class="preprocessor">#    modified:   file2</span>
+<span class="preprocessor">#    modified:   file3</span>
+<span class="preprocessor">#</span>
+</code></pre><p>如果你要做进一步的修改, 那就继续做, 做完后就把新修改的文件加入到索引中. 最后把他们提交：</p>
+<pre><code><span class="variable">$ </span>git commit
+</code></pre><p>这会提示你输入本次修改的注释，完成后就会记录一个新的项目版本.</p>
+<p>除了用<code>git add</code> 命令，我还可以用</p>
+<pre><code>$ git commit -<span class="literal">a</span>
+</code></pre><p>这会自动把所有内容被修改的文件(不包括新创建的文件)都添加到索引中，并且同时把它们提交。</p>
+<p>这里有一个关于写commit注释的技巧和大家分享:commit注释最好以一行短句子作为开头，来简要描述一下这次commit所作的修改(最好不要超过50个字符)；然后空一行再把详细的注释写清楚。这样就可以很方便的用工具把commit注释变成email通知，第一行作为标题，剩下的部分就作email的正文.</p>
+<h4 id="Git跟踪的是内容不是文件">Git跟踪的是内容不是文件</h4><p>很多版本控制系统都提供了一个 “add” 命令：告诉系统开始去跟踪某一个文件的改动。但是Git里的 ”add” 命令从某种程度上讲更为简单和强大. <code>git add</code> 不但是用来添加不在版本控制中的新文件，也用于添加已在版本控制中但是刚修改过的文件; 在这两种情况下, Git都会获得当前文件的快照并且把内容暂存(stage)到索引中，为下一次commit做好准备。</p>
+<p><a href="&quot;GitCast #2: Normal Workflow&quot;">gitcast:c2_normal_workflow</a></p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+	
+		<li class="prev"><a href="/2015/10/3_1/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/3_3/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com/
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

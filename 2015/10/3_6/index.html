@@ -1,0 +1,281 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>分布式的工作流程 | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com/">
+  
+  <meta name="description" content="分布式的工作流程假设Alice现在开始了一个新项目，在/home/alice/project建了一个新的git仓库(repository)；另一个叫Bob的工作目录也在同一台机器，他要提交代码。
+Bob 执行了这样的命令:
+$ git clone /home/alice/project myrepo">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="分布式的工作流程"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">分布式的工作流程</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="分布式的工作流程">分布式的工作流程</h2><p>假设Alice现在开始了一个新项目，在/home/alice/project建了一个新的git<br>仓库(repository)；另一个叫Bob的工作目录也在同一台机器，他要提交代码。</p>
+<p>Bob 执行了这样的命令:</p>
+<pre><code>$ git <span class="keyword">clone</span> <span class="title">/home</span>/alice/project myrepo
+</code></pre><p>这就建了一个新的叫”myrepo”的目录，这个目录里包含了一份Alice的仓库的<br>克隆(clone). 这份克隆和原始的项目一模一样，并且拥有原始项目的历史记<br>录。</p>
+<p>Bob 做了一些修改并且提交(commit)它们:</p>
+<pre><code>(edit <span class="built_in">files</span>)
+$ git commit -<span class="operator">a</span>
+(<span class="keyword">repeat</span> <span class="keyword">as</span> necessary)
+</code></pre><p>当他准备好了，他告诉Alice从仓库/home/bob/myrepo中把他的修改给拉<br>(pull)下来。她执行了下面几条命令:</p>
+<pre><code><span class="variable">$ </span>cd /home/alice/project
+<span class="variable">$ </span>git pull /home/bob/myrepo master
+</code></pre><p>这就把Bob的主(master)分支合并到了Alice的当前分支里了。如果Alice在<br>Bob修改文件内容的同时也做了修改的话，她可能需要手工去修复冲突.<br>(注意：”master”参数在上面的命令中并不一定是必须的，因为这是一个<br>默认参数)</p>
+<p>git pull命令执行两个操作: 它从远程分支(remote branch)抓取修改<br>的内容，然后把它合并进当前的分支。</p>
+<p>如果你要经常操作远程分支(remote branch),你可以定义它们的缩写:</p>
+<pre><code>$ git remote <span class="keyword">add </span><span class="keyword">bob </span>/home/<span class="keyword">bob/myrepo</span>
+</code></pre><p>这样，Alic可以用”git fetch”” 来执行”git pull”前半部分的工作，<br>但是这条命令并不会把抓下来的修改合并到当前分支里。</p>
+<pre><code><span class="variable">$ </span>git fetch bob
+</code></pre><p>我们用<code>git remote</code>命令建立了Bob的运程仓库的缩写，用这个(缩写)<br>名字我从Bob那得到所有远程分支的历史记录。在这里远程分支的名<br>字就叫<code>bob/master</code>.</p>
+<pre><code>$ git log -p <span class="literal">master</span>..bob/<span class="literal">master</span>
+</code></pre><p>上面的命令把Bob从Alice的主分支(master)中签出后所做的修改全部显示出来。</p>
+<p>当检查完修改后,Alice就可以把修改合并到她的主分支中。</p>
+<pre><code>$ git <span class="operator"><span class="keyword">merge</span> bob/<span class="keyword">master</span></span>
+</code></pre><p>这种合并(merge)也可以用pull来完成，就像下面的命令一样：</p>
+<pre><code>$ git pull . remotes/bob/<span class="literal">master</span>
+</code></pre><p>注意：git pull 会把远程分支合并进当前的分支里，而不管你在命令<br>行里指定什么。</p>
+<p>其后，Bob可以更新它的本地仓库–把Alice做的修改拉过来(pull):</p>
+<pre><code><span class="variable">$ </span>git pull
+</code></pre><p>如果Bob从Alice的仓库克隆(clone)，那么他就不需要指定Alice仓库的地<br>址；因为Git把Alice仓库的地址存储到Bob的仓库配库文件，这个地址就是<br>在git pull时使用：</p>
+<pre><code>$ git config --get remote<span class="class">.origin</span><span class="class">.url</span>
+/home/alice/project
+</code></pre><p>(如果要查看git clone创建的所有配置参数，可以使用”git config -l”,<br>linkgit:git-config[1] 的帮助文件里解释了每个参数的含义.)</p>
+<p>Git同时也保存了一份最初(pristine)的Alice主分支(master)，在<br>“origin/master”下面。</p>
+<pre><code>$ git <span class="keyword">branch </span>-r
+  origin/master
+</code></pre><p>如果Bob打算在另外一台主机上工作，他可以通过ssh协议来执行”clone”<br>和”pull”操作：</p>
+<pre><code>$ git <span class="keyword">clone</span> <span class="title">alice</span>.org:/home/alice/project myrepo
+</code></pre><p>git有他自带的协议(native protocol),还可以使用rsync或http; 你可以点<br>这里 linkgit:git-pull[1] 看一看更詳細的用法。</p>
+<p>Git也可以像CVS一样来工作：有一个中心仓库，不同的用户向它推送(push)<br>自己所作的修改；你可以看看这里： linkgit:git-push[1] linkgit:gitcvs-migration[1].</p>
+<h3 id="公共Git仓库">公共Git仓库</h3><p>另外一个提交修改的办法，就是告诉项目的维护者(maintainer)用 linkgit:git-pull[1]<br>命令从你的仓库里把修改拉下来。这和从主仓库”里更新代码类似，但是是从<br>另外一个方向来更新的。</p>
+<p>如果你和维护者(maintainer)都在同一台机器上有帐号，那么你们可以互相从对<br>方的仓库目录里直接拉(pull)所作的修改；git命令里的仓库地址也可以是本地<br>的某个目录名：</p>
+<pre><code>$ git <span class="keyword">clone</span> <span class="title">/path</span>/to/repository
+$ git pull /path/to/other/repository
+</code></pre><p>也可以是一个ssh地址：</p>
+<pre><code>$ git <span class="keyword">clone</span> <span class="title">ssh</span>://yourhost/~you/repository
+</code></pre><p>如果你的项目只有很少几个开发者，或是只需要同步很少的几个私有仓库，<br>上面的方法也许够你用的。</p>
+<p>然而，更通用的作法是维护几个不同的公开仓库(public repository).<br>这样可以把每个人的工作进度和公开仓库清楚的分开。</p>
+<p>你还是每天在你的本地私人仓库里工作，但是会定期的把本地的修改推(push)<br>到你的公开仓库中；其它开发者就可以从这个公开仓库来拉(pull)最新的代码。<br>如果其它开发者也有他自己的公共仓库，那么他们之间的开发流程就如下图<br>所示：</p>
+<pre><code>                      you push
+your personal repo ------------------&gt; your public repo
+  ^                                     |<span class="string">
+  </span>|<span class="string">                                     </span>|
+  |<span class="string"> you pull                            </span>|<span class="string"> they pull
+  </span>|<span class="string">                                     </span>|
+  |<span class="string">                                     </span>|
+      |<span class="string">               they push             V
+their public repo &lt;------------------- their repo</span>
+</code></pre><h3 id="将修改推到一个公共仓库">将修改推到一个公共仓库</h3><p>通过http或是git协议，其它维护者可以抓取(fetch)你最近的修改，但是他们<br>没有写权限。这样，这需要将本地私有仓库的最近修改上传公共仓库中。</p>
+<p>译者注: 通过http的WebDav协议是可以有写权限的,也有人配置了git over http.</p>
+<p>最简单的办法就是用 linkgit:git-push[1]命令 和ssh协议; 用你本地的”master”<br>分支去更新远程的”master”分支，执行下面的命令:</p>
+<pre><code>$ git <span class="keyword">push</span> ssh:<span class="comment">//yourserver.com/~you/proj.git master:master</span>
+</code></pre><p>or just</p>
+<p>或是:</p>
+<pre><code>$ git <span class="keyword">push</span> ssh:<span class="comment">//yourserver.com/~you/proj.git master</span>
+</code></pre><p>和git-fetch命令一样git-push如果命令的执行结果不是”快速向前”(fast forward)<br>就会报错; 下面的章节会讲如何处理这种情况.</p>
+<p>推(push)命令的目地仓库一般是个裸仓库(bare respository). 你也可以推到一<br>个签出工作目录树(checked-out working tree)的仓库，但是工作目录中内<br>容不会被推命令所更新。如果你把自己的分支推到一个已签出的分支里，这<br>会导致不可预知的后果。</p>
+<p>在用git-fetch命令时，你也可以修改配置参数，让你少打字:)。</p>
+<p>下面这些是例子:</p>
+<pre><code><span class="variable">$ </span>cat <span class="prompt">&gt;&gt;</span>.git/config &lt;&lt;<span class="constant">EOF</span>
+[remote <span class="string">"public-repo"</span>]
+    url = <span class="symbol">ssh:</span>/<span class="regexp">/yourserver.com/</span>~you/proj.git
+<span class="constant">EOF</span>
+</code></pre><p>你可以用下面的命令来代替前面复杂的命令:</p>
+<pre><code>$ git <span class="keyword">push</span> <span class="keyword">public</span>-repo master
+</code></pre><p>你可以点击这里: linkgit:git-config[1]，查看remote.<name>.url,<br>branch.<name>.remote, 和remote.<name>.push等选项的解释.</name></name></name></p>
+<h3 id="当推送代码失败时要怎么办">当推送代码失败时要怎么办</h3><p>如果推送(push)结果不是”快速向前”(fast forward),那么它<br>可能会报像下面一样的错误：</p>
+<pre><code>error: remote <span class="string">'refs/heads/master'</span> is <span class="operator">not</span> <span class="operator">an</span> ancestor <span class="operator">of</span>
+<span class="built_in">local</span>  <span class="string">'refs/heads/master'</span>.
+Maybe you are <span class="operator">not</span> up-<span class="built_in">to</span>-<span class="built_in">date</span> <span class="operator">and</span> need <span class="built_in">to</span> pull <span class="keyword">first</span>?
+error: failed <span class="built_in">to</span> push <span class="built_in">to</span> <span class="string">'ssh://yourserver.com/~you/proj.git'</span>
+</code></pre><p>这种情况通常由以下的原因产生：</p>
+<pre><code>-<span class="ruby"> 用 <span class="string">`git-reset --hard`</span> 删除了一个已经发布了的一个提交，或是
+</span>
+-<span class="ruby"> 用 <span class="string">`git-commit --amend`</span> 去替换一个已经发布的提交，或是
+</span>
+-<span class="ruby"> 用 <span class="string">`git-rebase`</span> 去rebase一个已经发布的提交.　 </span>
+</code></pre><p>你可以强制git-push在上传修改时先更新，只要在分支名前面加一个加号。</p>
+<pre><code>$ git <span class="keyword">push</span> ssh:<span class="comment">//yourserver.com/~you/proj.git +master</span>
+</code></pre><p>通常不论公共仓库的分支是否被修改，他都被修改为指向原来指向的提交(commit)<br>跟随的下一个提交(commit)。如果在这种情况下强制地推送，你就破坏了之前的约定。</p>
+<p>尽管如此，这也是一种通常的用法来简单地发布一系列正在修正的补丁，并且只要你<br>通知了其他的开发者你打算怎样操作这个分支，这也是一种可以接受的折中办法。</p>
+<p>一个推送(push)也可能因为其他人有向这个仓库(repository)推送的权利而失败。<br>在这种情况下，正确地解决办法是首先用”pull”命令或者”fetch”命令和”rebase”<br>命令更新你的代码，然后重新尝试推送(push)；更详细的了解请看下一部分和<br>linkgit:gitcvs-migration[7]。</p>
+<p><a href="&quot;GitCast #8: Distributed Workflow&quot;">gitcast:c8-dist-workflow</a></p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+	
+		<li class="prev"><a href="/2015/10/3_5/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/3_7/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com/
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

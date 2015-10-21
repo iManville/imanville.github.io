@@ -1,0 +1,221 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>比较提交 - Git Diff | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com/">
+  
+  <meta name="description" content="比较提交 - Git Diff你可以用 linkgit:git-diff[1] 来比较项目中任意两个版本的差异。
+$ git diff master..test
+上面这条命令只显示两个分支间的差异，如果你想找出‘master’,‘test’的共有父分支和’test’分支之间的差异，你用3个‘.’来取">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="比较提交 - Git Diff"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">比较提交 - Git Diff</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="比较提交_-_Git_Diff">比较提交 - Git Diff</h2><p>你可以用 linkgit:git-diff[1] 来比较项目中任意两个版本的差异。</p>
+<pre><code>$ git diff <span class="literal">master</span>..test
+</code></pre><p>上面这条命令只显示两个分支间的差异，如果你想找出‘master’,‘test’的共有<br>父分支和’test’分支之间的差异，你用3个‘.’来取代前面的两个’.’ 。</p>
+<pre><code>$ git diff <span class="literal">master</span>...test
+</code></pre><p>linkgit:git-diff[1] 是一个难以置信的有用的工具，可以找出你项目上任意两点间<br>的改动，或是用来查看别人提交进来的新分支。</p>
+<h3 id="哪些内容会被提交(commit)">哪些内容会被提交(commit)</h3><p>你通常用linkgit:git-diff[1]来找你当前工作目录和上次提交与本地索引间的差异。</p>
+<pre><code><span class="variable">$ </span>git diff
+</code></pre><p>上面的命令会显示在当前的工作目录里的，没有 staged(添加到索引中)，且在下次提交时<br>不会被提交的修改。</p>
+<p>如果你要看在下次提交时要提交的内容(staged,添加到索引中),你可以运行：</p>
+<pre><code>$ git diff <span class="comment">--cached</span>
+</code></pre><p>上面的命令会显示你当前的索引和上次提交间的差异；这些内容在不带”-a”参数运行<br>“git commit”命令时就会被提交。</p>
+<pre><code><span class="variable">$ </span>git diff <span class="constant">HEAD</span>
+</code></pre><p>上面这条命令会显示你工作目录与上次提交时之间的所有差别，这条命令所显示的<br>内容都会在执行”git commit -a”命令时被提交。</p>
+<h3 id="更多的比较选项">更多的比较选项</h3><p>如果你要查看当前的工作目录与另外一个分支的差别，你可以用下面的命令执行:</p>
+<pre><code>$ git diff <span class="built_in">test</span>
+</code></pre><p>这会显示你当前工作目录与另外一个叫’test’分支的差别。你也以加上路径限定符，来只<br>比较某一个文件或目录。</p>
+<pre><code><span class="variable">$ </span>git diff <span class="constant">HEAD</span> -- ./<span class="class"><span class="keyword">lib</span> </span>
+</code></pre><p>上面这条命令会显示你当前工作目录下的lib目录与上次提交之间的差别(或者更准确的<br>说是在当前分支)。</p>
+<p>如果不是查看每个文件的详细差别，而是统计一下有哪些文件被改动，有多少行被改<br>动，就可以使用‘–stat’ 参数。</p>
+<pre><code>$&gt;git diff --stat
+ layout/book_index_template.html                    |    <span class="number">8</span> ++-
+ text/<span class="number">05</span>_Installing_Git/<span class="number">0</span>_Source.markdown           |   <span class="number">14</span> ++++++
+ text/<span class="number">05</span>_Installing_Git/<span class="number">1</span>_Linux.markdown            |   <span class="number">17</span> +++++++
+ text/<span class="number">05</span>_Installing_Git/<span class="number">2</span>_Mac_104.markdown          |   <span class="number">11</span> +++++
+ text/<span class="number">05</span>_Installing_Git/<span class="number">3</span>_Mac_105.markdown          |    <span class="number">8</span> ++++
+ text/<span class="number">05</span>_Installing_Git/<span class="number">4</span>_Windows.markdown          |    <span class="number">7</span> +++
+ .../<span class="number">1</span>_Getting_a_Git_Repo.markdown                  |    <span class="number">7</span> +++-
+ .../<span class="number">0</span>_ Comparing_Commits_Git_Diff.markdown         |   <span class="number">45</span> +++++++++++++++++++-
+ .../<span class="number">0</span>_ Hosting_Git_gitweb_repoorcz_github.markdown |    <span class="number">4</span> +-
+ <span class="number">9</span> files changed, <span class="number">115</span> insertions(+), <span class="number">6</span> deletions(-)
+</code></pre><p>有时这样全局性的查看哪些文件被修改，能让你更轻轻一点。</p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+			
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+	
+		<li class="prev"><a href="/2015/10/3_4/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/3_6/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com/
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

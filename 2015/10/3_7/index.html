@@ -1,0 +1,212 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Git标签 | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com/">
+  
+  <meta name="description" content="Git标签轻量级标签我们可以用 linkgit:git-tag[1]不带任何参数创建一个标签(tag)指定某个提交(commit):
+$ git tag stable-1 1b2e1d63ff
+这样，我们可以用stable-1 作为提交(commit) “1b2e1d63ff” 的代称(refer)">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Git标签"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">Git标签</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="Git标签">Git标签</h2><h3 id="轻量级标签">轻量级标签</h3><p>我们可以用 linkgit:git-tag[1]不带任何参数创建一个标签(tag)指定某个提交(commit):</p>
+<pre><code>$ git <span class="keyword">tag</span> <span class="title">stable-1</span> <span class="number">1</span>b2e1d63ff
+</code></pre><p>这样，我们可以用stable-1 作为提交(commit) “1b2e1d63ff” 的代称(refer)。</p>
+<p>前面这样创建的是一个“轻量级标签”，这种分支通常是从来不移动的。</p>
+<p>如果你想为一个标签(tag)添加注释，或是为它添加一个签名(sign it cryptographically),<br>那么我们就需要创建一个 ”标签对象”.</p>
+<h3 id="标签对象">标签对象</h3><p>如果有 “-a”, “-s” 或是 “-u <key-id>“ 中间的一个命令参数被指定，那么就会创建<br>一个标签对象，并且需要一个标签消息(tag message). 如果没有”-m <msg>“ 或是<br>“-F <file>“ 这些参数，那么就会启动一个编辑器来让用户输入标签消息(tag message).</file></msg></key-id></p>
+<p>译者注：大家觉得这个标签消息是不是提交注释(commit comment)比较像。</p>
+<p>当这样的一条命令执行后，一个新的对象被添加到Git对象库中，并且标签引用就指向了<br>一个标签对象，而不是指向一个提交(commit). 这样做的好处就是：你可以为一个标签<br>打处签名(sign), 方便你以后来查验这是不是一个正确的提交(commit).</p>
+<p>下面是一个创建标签对象的例子:</p>
+<pre><code>$ git <span class="keyword">tag</span> <span class="title">-a</span> stable-<span class="number">1</span> <span class="number">1</span>b2e1d63ff
+</code></pre><p>标签对象可以指向任何对象，但是在通常情况下是一个提交(commit). (在Linux内核代<br>码中，第一个标签对象是指向一个树对象(tree),而不是指向一个提交(commit)).</p>
+<h3 id="签名的标签">签名的标签</h3><p>如果你配有GPG key,那么你就很容易创建签名的标签.首先你要在你的 <em>.git/config 或
+</em>~.gitconfig里配好key.</p>
+<p>下面是示例:</p>
+<pre><code>[<span class="keyword">user</span>]
+    signingkey = <span class="variable">&lt;gpg-key-id&gt;</span>
+</code></pre><p>你也可以用命令行来配置:</p>
+<pre><code>$ git config (--global) <span class="keyword">user</span>.signingkey <span class="variable">&lt;gpg-key-id&gt;</span>
+</code></pre><p>现在你可以直接用”-s” 参数来创“签名的标签”。</p>
+<pre><code>$ git <span class="keyword">tag</span> <span class="title">-s</span> stable-<span class="number">1</span> <span class="number">1</span>b2e1d63ff
+</code></pre><p>如果没有在配置文件中配GPG key,你可以用”-u“ 参数直接指定。</p>
+<pre><code>$ git <span class="keyword">tag</span> <span class="title">-u</span> <span class="tag">&lt;gpg-key-id&gt;</span> stable-<span class="number">1</span> <span class="number">1</span>b2e1d63ff
+</code></pre>	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+	
+		<li class="prev"><a href="/2015/10/3_6/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next disabled"><a>next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com/
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

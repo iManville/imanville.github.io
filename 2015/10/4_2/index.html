@@ -1,0 +1,232 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>rebase | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com/">
+  
+  <meta name="description" content="rebase假设你现在基于远程分支”origin”，创建一个叫”mywork”的分支。
+$ git checkout -b mywork origin
+
+现在我们在这个分支做一些修改，然后生成两个提交(commit).
+$ vi file.txt
+$ git commit
+$ vi otherfil">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="rebase"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">rebase</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="rebase">rebase</h2><p>假设你现在基于远程分支”origin”，创建一个叫”mywork”的分支。</p>
+<pre><code>$ git checkout -<span class="tag">b</span> mywork origin
+</code></pre><p><img src="http://gitbook.liuhui998.com/assets/images/figure/rebase0.png" alt="fig:rebase0"></p>
+<p>现在我们在这个分支做一些修改，然后生成两个提交(commit).</p>
+<pre><code><span class="variable">$ </span>vi file.txt
+<span class="variable">$ </span>git commit
+<span class="variable">$ </span>vi otherfile.txt
+<span class="variable">$ </span>git commit
+...
+</code></pre><p>但是与此同时，有些人也在”origin”分支上做了一些修改并且做了提交了.<br>这就意味着”origin”和”mywork”这两个分支各自”前进”了，它们之间”分叉”了。</p>
+<p><img src="http://gitbook.liuhui998.com/assets/images/figure/rebase1.png" alt="fig:rebase1"></p>
+<p>在这里，你可以用”pull”命令把”origin”分支上的修改拉下来并且和你的修改合并；<br>结果看起来就像一个新的”合并的提交”(merge commit):</p>
+<p><img src="http://gitbook.liuhui998.com/assets/images/figure/rebase2.png" alt="fig:rebase2"></p>
+<p>但是，如果你想让”mywork”分支历史看起来像没有经过任何合并一样，你也许可以用 linkgit:git-rebase[1]:</p>
+<pre><code><span class="variable">$ </span>git checkout mywork
+<span class="variable">$ </span>git rebase origin
+</code></pre><p>这些命令会把你的”mywork”分支里的每个提交(commit)取消掉，并且把它们临时<br>保存为补丁(patch)(这些补丁放到”.git/rebase”目录中),然后把”mywork”分支更新<br>到最新的”origin”分支，最后把保存的这些补丁应用到”mywork”分支上。</p>
+<p><img src="http://gitbook.liuhui998.com/assets/images/figure/rebase3.png" alt="fig:rebase3"></p>
+<p>当’mywork’分支更新之后，它会指向这些新创建的提交(commit),而那些老的提交会被丢弃。<br>如果运行垃圾收集命令(pruning garbage collection), 这些被丢弃的提交就会删除.<br>（请查看 linkgit:git-gc[1])</p>
+<p><img src="http://gitbook.liuhui998.com/assets/images/figure/rebase4.png" alt="fig:rebase4"></p>
+<p>现在我们可以看一下用合并(merge)和用rebase所产生的历史的区别：</p>
+<p><img src="http://gitbook.liuhui998.com/assets/images/figure/rebase5.png" alt="fig:rebase5"></p>
+<p>在rebase的过程中，也许会出现冲突(conflict). 在这种情况，Git会停止rebase并会让你去解决<br>冲突；在解决完冲突后，用”git-add”命令去更新这些内容的索引(index), 然后，你无需执行<br>git-commit,只要执行:</p>
+<pre><code>$ git rebase --<span class="keyword">continue</span>
+</code></pre><p>这样git会继续应用(apply)余下的补丁。</p>
+<p>在任何时候，你可以用<code>--abort</code>参数来终止rebase的行动，并且”mywork”<br>分支会回到rebase开始前的状态。</p>
+<pre><code>$ git rebase <span class="comment">--abort</span>
+</code></pre><p><a href="&quot;GitCast #7: Rebasing&quot;">gitcast:c7-rebase</a></p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+	
+		<li class="prev"><a href="/2015/10/4_1/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/4_3/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com/
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>
