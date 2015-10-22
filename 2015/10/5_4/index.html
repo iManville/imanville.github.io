@@ -1,0 +1,268 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>查找问题的利器 - Git Bisect | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com">
+  
+  <meta name="description" content="查找问题的利器 - Git Bisect假设你在项目的’2.6.18’版上面工作, 但是你当前的代码(master)崩溃(crash)了. 有时解决这种问题的最好办法是: 手工逐步恢复(brute-force regression)项目历史,　找出是哪个提交(commit)导致了这个问题. 但是 l">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="查找问题的利器 - Git Bisect"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">查找问题的利器 - Git Bisect</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="查找问题的利器_-_Git_Bisect">查找问题的利器 - Git Bisect</h2><p>假设你在项目的’2.6.18’版上面工作, 但是你当前的代码(master)崩溃(crash)了. 有时解决这种问题的最好办法是: 手工逐步恢复(brute-force regression)项目历史,　找出是哪个提交(commit)导致了这个问题. 但是 linkgit:git-bisect<a href="二分查找">1</a> 可以更好帮你解决这个问题:</p>
+<pre><code>$ git <span class="keyword">bisect </span>start
+$ git <span class="keyword">bisect </span>good <span class="literal">v2</span>.<span class="number">6</span>.<span class="number">18</span>
+$ git <span class="keyword">bisect </span><span class="keyword">bad </span>master
+<span class="keyword">Bisecting: </span><span class="number">3537</span> <span class="keyword">revisions </span>left to test after this
+[<span class="number">65934</span>a9a028b88e83e2b0f8b36618fe503349f8e] <span class="keyword">BLOCK: </span>Make USB storage depend on SCSI rather than <span class="keyword">selecting </span><span class="keyword">it </span>[try <span class="number">#6</span>]
+</code></pre><p>如果你现在运行”git branch”,　会发现你现在所在的是”no branch”(译者注:这是进行git bisect的一种状态).  这时分支指向提交（commit):”69543”, 此提交刚好是在”v2.6.18”和“master”中间的位置.  现在在这个分支里,　编译并测试项目代码, 查看它是否崩溃(crash). 假设它这次崩溃了, 那么运行下面的命令:</p>
+<pre><code>$ git <span class="keyword">bisect </span><span class="keyword">bad
+</span><span class="keyword">Bisecting: </span><span class="number">1769</span> <span class="keyword">revisions </span>left to test after this
+[<span class="number">7</span>eff82c8b1511017ae605f0c99ac275a7e21b867] i2c-core: Drop useless <span class="keyword">bitmaskings</span>
+</code></pre><p>现在git自动签出(checkout)一个更老的版本. 继续这样做, 用”git bisect good”,”git bisect bad”告诉git每次签出的版本是否没有问题; 你现在可以注意一下当前的签出的版本, 你会发现git在用”二分查找(binary search)方法”签出”bad”和”good”之间的一个版本(commit or revison). </p>
+<p>在这个项目(case)中, 经过13次尝试, 找出了导致问题的提交(guilty commit). 你可以用 linkgit:git-show[1] 命令查看这个提交(commit), 找出是谁做的修改，然后写邮件给TA. 最后, 运行:</p>
+<pre><code>$ git <span class="keyword">bisect </span>reset
+</code></pre><p>这会到你之前(执行git bisect start之前)的状态.</p>
+<p>注意: git-bisect 每次所选择签出的版本, 只是一个建议; 如果你有更好的想法, 也可以去试试手工选择一个不同的版本.</p>
+<p>运行:<br>    $ git bisect visualize</p>
+<p>这会运行gitk, 界面上会标识出”git bisect”命令自动选择的提交(commit). 你可以选择一个相邻的提交(commit), 记住它的SHA串值, 用下面的命令把它签出来:</p>
+<pre><code>$ git <span class="operator"><span class="keyword">reset</span> <span class="comment">--hard fb47ddb2db...</span></span>
+</code></pre><p>然后进行测试, 再根据测试結果执行”bisect good”或是”bisect bad”; 就这样反复执行, 直到找出问题为止.</p>
+<p>译者注: 关于”git bisect start”后的分支状态, 译文和原文不一致. 原文是说执行”git bisect start”后会创建一个名为”bisect”的分支, 但是实际情况却是处于”no branch”的状态.</p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+	
+		<li class="prev"><a href="/2015/10/5_3/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/5_5/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

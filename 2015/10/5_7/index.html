@@ -1,0 +1,282 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>定制Git | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com">
+  
+  <meta name="description" content="定制Gitlinkgit:git-config[1]
+更改你的编辑器$ git config --global core.editor emacs
+添加别名$ git config --global alias.last &#39;cat-file commit HEAD&#39;
+
+$ git last
+tree">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="定制Git"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">定制Git</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="定制Git">定制Git</h2><p>linkgit:git-config[1]</p>
+<h3 id="更改你的编辑器">更改你的编辑器</h3><pre><code>$ git config --<span class="keyword">global</span> core.<span class="keyword">editor</span> emacs
+</code></pre><h3 id="添加别名">添加别名</h3><pre><code>$ git config --global alias.last 'cat-file commit HEAD'
+
+$ git last
+tree c85fbd<span class="number">1996b8e7</span>e5eda<span class="number">1288b56042</span>c0cdb91836b
+parent cdc<span class="number">9a0a28173</span>b6ba4aca00eb34f5aabb<span class="number">39980735</span>
+author Scott Chacon &lt;schacon@gmail.com&gt; <span class="number">1220473867</span> -0700
+committer Scott Chacon &lt;schacon@gmail.com&gt; <span class="number">1220473867</span> -0700
+
+fixed a weird formatting problem
+
+$ git cat-file commit HEAD
+tree c85fbd<span class="number">1996b8e7</span>e5eda<span class="number">1288b56042</span>c0cdb91836b
+parent cdc<span class="number">9a0a28173</span>b6ba4aca00eb34f5aabb<span class="number">39980735</span>
+author Scott Chacon &lt;schacon@gmail.com&gt; <span class="number">1220473867</span> -0700
+committer Scott Chacon &lt;schacon@gmail.com&gt; <span class="number">1220473867</span> -0700
+
+fixed a weird formatting problem
+</code></pre><h3 id="添加颜色">添加颜色</h3><p>所有的color.*选项请参见linkgit:git-config[1]的文档</p>
+<pre><code>$ git config <span class="attribute">color</span><span class="class">.branch</span> <span class="attribute">auto</span>
+$ git config <span class="attribute">color</span><span class="class">.diff</span> <span class="attribute">auto</span>
+$ git config <span class="attribute">color</span><span class="class">.interactive</span> <span class="attribute">auto</span>
+$ git config <span class="attribute">color</span><span class="class">.status</span> <span class="attribute">auto</span>
+</code></pre><p>或者你可以通过color.ui选项把颜色全部打开:</p>
+<pre><code>$ git config <span class="attribute">color</span><span class="class">.ui</span> true
+</code></pre><h3 id="提交模板">提交模板</h3><pre><code>$ git config <span class="operator"><span class="keyword">commit</span>.<span class="keyword">template</span> <span class="string">'/etc/git-commit-template'</span></span>
+</code></pre><h3 id="日志格式">日志格式</h3><pre><code>$ git config format<span class="class">.pretty</span> oneline
+</code></pre><h3 id="其他配置选项">其他配置选项</h3><p>除上面提到的选项外, 还有很多很有趣的选项去配置打包, 垃圾回收, 合并, 分支, http传输, diff, 分页, 空白字符等等的行为. 如果你需要更加深入地调教git, 请阅读linkgit:git-config[1]文档.</p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+			
+		
+	
+		
+			
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+	
+		<li class="prev"><a href="/2015/10/5_6/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/5_8/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Git是如何存储对象的 | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com">
+  
+  <meta name="description" content="Git是如何存储对象的这一章会详细讲解Git如何物理存储各对象.
+所有的对象都以SHA值为索引用gzip格式压缩存储, 每个对象都包含了对象类型, 大小和内容.
+Git中存在两种对象 - 松散对象(loose object)和打包对象(packed object).
+松散对象松散对象是一种比较简单格">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Git是如何存储对象的"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">Git是如何存储对象的</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="Git是如何存储对象的">Git是如何存储对象的</h2><p>这一章会详细讲解Git如何物理存储各对象.</p>
+<p>所有的对象都以SHA值为索引用gzip格式压缩存储, 每个对象都包含了对象类型, 大小和内容.</p>
+<p>Git中存在两种对象 - 松散对象(loose object)和打包对象(packed object).</p>
+<h3 id="松散对象">松散对象</h3><p>松散对象是一种比较简单格式. 它就是磁盘上的一个存储压缩数据的文件. 每一个对象都被写入一个单独文件中.</p>
+<p>如果你对象的SHA值是<code>ab04d884140f7b0cf8bbf86d6883869f16a46f65</code>, 那么对应的文件会被存储在:</p>
+<pre><code>GIT_DIR/objects/ab/<span class="number">04d884140f7</span>b0cf8bbf<span class="number">86d6883869</span>f16a46f65
+</code></pre><p>Git使用SHA值的前两个字符作为子目录名字, 所以一个目录中永远不会包含过多的对象. 文件名则是余下的38个字符.</p>
+<p>可以用下面的Ruby代码说明对象数据是如何存储的:</p>
+<pre><code>ruby
+<span class="function"><span class="keyword">def</span> <span class="title">put_raw_object</span></span>(content, type)
+  size = content.length.to_s
+
+  header = <span class="string">"<span class="subst">#{type}</span> <span class="subst">#{size}</span>\\0"</span> <span class="comment"># type(space)size(null byte)</span>
+  store = header + content
+
+  sha1 = <span class="constant">Digest:</span><span class="symbol">:SHA1</span>.hexdigest(store)
+  path = <span class="variable">@git_dir</span> + <span class="string">'/'</span> + sha1[<span class="number">0</span>...<span class="number">2</span>] + <span class="string">'/'</span> + sha1[<span class="number">2</span>..<span class="number">40</span>]
+
+  if !<span class="constant">File.</span>exists?(path)
+    content = <span class="constant">Zlib:</span><span class="symbol">:Deflate</span>.deflate(store)
+
+    <span class="constant">FileUtils.</span>mkdir_p(<span class="variable">@directory</span>+<span class="string">'/'</span>+sha1[<span class="number">0</span>...<span class="number">2</span>])
+    <span class="constant">File.</span>open(path, <span class="string">'w'</span>) <span class="keyword">do</span> |f|
+      f.write content
+    <span class="keyword">end</span>
+  <span class="keyword">end</span>
+  <span class="keyword">return</span> sha1
+<span class="keyword">end</span>
+</code></pre><h3 id="打包对象">打包对象</h3><p>另外一种对象存储方式是使用打包文件(packfile). 由于Git把每个文件的每个版本都作为一个单独的对象, 它的效率可能会十分的低. 设想一下在一个数千行的文件中改动一行, Git会把修改后的文件整个存储下来, 很浪费空间.</p>
+<p>Git使用打包文件(packfile)去节省空间. 在这个格式中, Git只会保存第二个文件中改变了的部分, 然后用一个指针指向相似的那个文件(译注: 即第一个文件).</p>
+<p>对象通常是以松散格式写到磁盘上, 因为这个格式的访问代价比较低. 然后, 你最终会需要把对象存放到打包格式中去节省磁盘空间 - 这个工作可以通过linkgit:git-gc[1]来完成. 它使用一个相当复杂的启发式算法去决定哪些文件是最相似的, 然后基于此分析去计算差异. 可以存在多个打包文件, 在必要情况下, 它们可被解包(linkgit:git-unpack-objects[1])成为松散对象或者重新打包(linkgit:git-repack[1]).</p>
+<p>Git会为每一个打包文件创建一个较小的索引文件. 索引文件中包含了对象在打包文件中的偏移, 以便于通过SHA值来快速找到特定的对象.</p>
+<p>打包文件的实现细节会在稍后的”打包文件”(Packfile)一章中讲述.</p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+	
+		<li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/7_2/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

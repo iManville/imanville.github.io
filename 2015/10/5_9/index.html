@@ -1,0 +1,375 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>找回丢失的对象 | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com">
+  
+  <meta name="description" content="找回丢失的对象译者注: 原书这里只有两个链接：Recovering Lost Commits Blog Post，　Recovering Corrupted Blobs by Linus
+我根据第一个链接，整理了一篇博文，并把它做为原书补充。
+在玩git的过程中，常有失误的时候，有时把需要的东东给删">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="找回丢失的对象"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">找回丢失的对象</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="找回丢失的对象">找回丢失的对象</h2><p>译者注: 原书这里只有两个链接：<br><a href="http://programblings.com/2008/06/07/the-illustrated-guide-to-recovering-lost-commits-with-git" target="_blank" rel="external">Recovering Lost Commits Blog Post</a>，　<br><a href="http://www.kernel.org/pub/software/scm/git/docs/howto/recover-corrupted-blob-object.txt" target="_blank" rel="external">Recovering Corrupted Blobs by Linus</a></p>
+<p>我根据第一个链接，整理了一篇<a href="http://liuhui998.com/2010/10/22/recover_lost_commits_with_git/" target="_blank" rel="external">博文</a>，并把它做为原书补充。</p>
+<p>在玩git的过程中，常有失误的时候，有时把需要的东东给删了。<br>不过没有关系，git给了我们一层安全网，让们能有机会把失去的东东给找回来。</p>
+<p>Let’s go!</p>
+<p>###准备###</p>
+<p>我们先创建一个用以实验的仓库，在里面创建了若干个提交和分支。<br>BTW：你可以直接把下面的命令复制到shell里执行。</p>
+<pre><code><span class="built_in">mkdir</span> recovery;<span class="keyword">cd</span> recovery
+git init
+touch <span class="keyword">file</span>
+git <span class="built_in">add</span> <span class="keyword">file</span>
+git commit -<span class="keyword">m</span> <span class="string">"First commit"</span>
+<span class="keyword">echo</span> <span class="string">"Hello World"</span> &gt; <span class="keyword">file</span>
+git <span class="built_in">add</span> .
+git commit -<span class="keyword">m</span> <span class="string">"Greetings"</span>
+git branch cool_branch　
+git checkout cool_branch
+<span class="keyword">echo</span> <span class="string">"What up world?"</span> &gt; cool_file
+git <span class="built_in">add</span> .
+git commit -<span class="keyword">m</span> <span class="string">"Now that was cool"</span>
+git checkout master
+<span class="keyword">echo</span> <span class="string">"What does that mean?"</span> &gt;&gt; <span class="keyword">file</span>
+</code></pre><p>###恢复已删除分支提交###</p>
+<p>现在repo里有两个branch</p>
+<pre><code>$ git <span class="keyword">branch
+</span><span class="label">cool_branch</span>
+* master
+</code></pre><p>存储当前仓库未提交的改动</p>
+<pre><code>$ git stash save <span class="string">"temp save"</span>
+Saved working directory and index <span class="keyword">state</span> On master: temp save
+HEAD is now at e3c9b6b Greetings
+</code></pre><p>删除一个分支</p>
+<pre><code>$ git <span class="keyword">branch </span>-D cool_branch
+<span class="label">Deleted</span> <span class="keyword">branch </span>cool_branch (was <span class="number">2</span>e43cd5).
+
+$ git <span class="keyword">branch
+</span> * master
+</code></pre><p> 用<code>git fsck --lost-found</code>命令找出刚才删除的分支里面的提交对象。</p>
+<pre><code><span class="variable">$git</span> fsck --lost-found
+ dangling commit <span class="number">2</span>e43cd56ee4fb08664cd843cd32836b54fbf594a
+</code></pre><p>用git show命令查看一个找到的对象的内容，看是否为我们所找的。</p>
+<pre><code>git show <span class="number">2e43</span>cd56ee4fb08664cd843cd32836b54fbf594a
+
+  commit <span class="number">2e43</span>cd56ee4fb08664cd843cd32836b54fbf594a
+  Author: liuhui &lt;liuhui998[<span class="preprocessor">#]gmail.com&gt;</span>
+  Date:   Sat Oct <span class="number">23</span> <span class="number">12</span>:<span class="number">53</span>:<span class="number">50</span> <span class="number">2010</span> +<span class="number">0800</span>
+
+  Now that was cool
+
+  diff --git a/cool_file b/cool_file
+  <span class="keyword">new</span> file mode <span class="number">100644</span>
+  index <span class="number">0000000.</span><span class="number">.79</span>c2b89
+  --- /dev/null
+  +++ b/cool_file
+  @@ -<span class="number">0</span>,<span class="number">0</span> +<span class="number">1</span> @@
+  +What up world?
+</code></pre><p>这个提交对象确实是我们在前面删除的分支的内容；下面我们就要考虑一下要如何来恢复它了。</p>
+<h4 id="使用git_rebase_进行恢复">使用git rebase　进行恢复</h4><pre><code><span class="variable">$git</span> rebase <span class="number">2</span>e43cd56ee4fb08664cd843cd32836b54fbf594a
+First, rewinding head <span class="keyword">to</span> replay your work on top <span class="keyword">of</span> it...
+Fast-forwarded master <span class="keyword">to</span> <span class="number">2</span>e43cd56ee4fb08664cd843cd32836b54fbf594a.
+</code></pre><p>现在我们用git log命令看一下，看看它有没有恢复:</p>
+<pre><code>$ git <span class="built_in">log</span>
+
+commit <span class="number">2e43</span>cd56ee4fb08664cd843cd32836b54fbf594a
+Author: liuhui &lt;liuhui998[<span class="preprocessor">#]gmail.com&gt;</span>
+Date:   Sat Oct <span class="number">23</span> <span class="number">12</span>:<span class="number">53</span>:<span class="number">50</span> <span class="number">2010</span> +<span class="number">0800</span>
+
+Now that was cool
+
+commit e3c9b6b967e6e8c762b500202b146f514af2cb05
+Author: liuhui &lt;liuhui998[<span class="preprocessor">#]gmail.com&gt;</span>
+Date:   Sat Oct <span class="number">23</span> <span class="number">12</span>:<span class="number">53</span>:<span class="number">50</span> <span class="number">2010</span> +<span class="number">0800</span>
+
+Greetings
+
+commit <span class="number">5e90516</span>a4a369be01b54323eb8b2660545051764
+Author: liuhui &lt;liuhui998[<span class="preprocessor">#]gmail.com&gt;</span>
+Date:   Sat Oct <span class="number">23</span> <span class="number">12</span>:<span class="number">53</span>:<span class="number">50</span> <span class="number">2010</span> +<span class="number">0800</span>
+
+First commit
+</code></pre><p>提交是找回来，但是分支没有办法找回来：</p>
+<pre><code>liuhui<span class="variable">@liuhui</span><span class="symbol">:~/work/test/git/recovery</span><span class="variable">$ </span>git branch
+* master
+</code></pre><h4 id="使用git_merge_进行恢复">使用git merge　进行恢复</h4><p>我们把刚才的恢复的提交删除</p>
+<pre><code>$ git <span class="operator"><span class="keyword">reset</span> <span class="comment">--hard HEAD^</span>
+<span class="keyword">HEAD</span> <span class="keyword">is</span> <span class="keyword">now</span> <span class="keyword">at</span> e3c9b6b Greetings</span>
+</code></pre><p>再把刚删的提交给找回来：</p>
+<pre><code>git fsck --lost-found
+dangling commit <span class="number">2</span>e43<span class="built_in">cd</span>56ee4fb08664<span class="built_in">cd</span>843<span class="built_in">cd</span>32836b54fbf594a
+</code></pre><p>不过这回我们用是合并命令进行恢复：</p>
+<pre><code>$ git merge <span class="number">2e43</span>cd56ee4fb08664cd843cd32836b54fbf594a
+Updating e3c9b6b.<span class="number">.2e43</span>cd5
+Fast-forward
+cool_file |    <span class="number">1</span> +
+<span class="number">1</span> files changed, <span class="number">1</span> insertions(+), <span class="number">0</span> deletions(-)
+create mode <span class="number">100644</span> cool_file
+</code></pre><h3 id="git_stash的恢复">git stash的恢复</h3><p>前面我们用git stash把没有提交的内容进行了存储，如果这个存储不小心删了怎么办呢？</p>
+<p>当前repo里有的存储：<br>    $ git stash list<br>    stash@{0}: On master: temp save</p>
+<p>把它们清空：<br>    $git stash clear<br>    liuhui@liuhui:~/work/test/git/recovery$ git stash list</p>
+<p>再用git fsck –lost-found找回来：<br>    $git fsck –lost-found<br>    dangling commit 674c0618ca7d0c251902f0953987ff71860cb067</p>
+<p>用git show看一下回来的内容对不对：</p>
+<pre><code>$git show <span class="number">674</span>c0618ca7d0c251902f0953987ff71860cb067
+
+commit <span class="number">674</span>c0618ca7d0c251902f0953987ff71860cb067
+Merge: e3c9b6b <span class="number">2</span>b2b41e
+Author: liuhui &lt;liuhui998[<span class="preprocessor">#]gmail.com&gt;</span>
+Date:   Sat Oct <span class="number">23</span> <span class="number">13</span>:<span class="number">44</span>:<span class="number">49</span> <span class="number">2010</span> +<span class="number">0800</span>
+
+    On master: temp save
+
+diff --cc file
+index <span class="number">557</span>db03,<span class="number">557</span>db03..f2a8bf3
+--- a/file
++++ b/file
+@@@ -<span class="number">1</span>,<span class="number">1</span> -<span class="number">1</span>,<span class="number">1</span> +<span class="number">1</span>,<span class="number">2</span> @@@
+  Hello World
+  ++What does that mean?
+</code></pre><p>看起来没有问题，好的，那么我就把它恢复了吧：</p>
+<pre><code>$ git <span class="operator"><span class="keyword">merge</span> <span class="number">674</span>c0618ca7d0c251902f0953987ff71860cb067
+<span class="keyword">Merge</span> made <span class="keyword">by</span> <span class="keyword">recursive</span>.
+ <span class="keyword">file</span> |    <span class="number">1</span> +
+  <span class="number">1</span> files <span class="keyword">changed</span>, <span class="number">1</span> insertions(+), <span class="number">0</span> deletions(-)</span>
+</code></pre><p>###备注###</p>
+<p>这篇文章主要内容来自这里：<a href="http://programblings.com/2008/06/07/the-illustrated-guide-to-recovering-lost-commits-with-git/" target="_blank" rel="external">The illustrated guide to recovering lost commits with Git</a>,我做了一些整理的工作。</p>
+<p>如果对于文中的一些命令不熟，可以参考<a href="http://gitbook.liuhui998.com" target="_blank" rel="external">Git Community Book中文版</a></p>
+<p>其实这里最重要的一个命令就是：git fsck –lost-found，因为git中把commit删了后，并不是真正的删除，而是变成了悬空对象（dangling commit）。我们只要把把这悬空对象（dangling commit）找出来，用<a href="http://gitbook.liuhui998.com/4_2.html" target="_blank" rel="external">git rebase</a>也好，用<a href="http://gitbook.liuhui998.com/3_3.html" target="_blank" rel="external">git merge</a>也行就能把它们给恢复。</p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+	
+		<li class="prev"><a href="/2015/10/5_8/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/5_10/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

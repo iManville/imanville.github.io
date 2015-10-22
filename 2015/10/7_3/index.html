@@ -1,0 +1,274 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Git引用 | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com">
+  
+  <meta name="description" content="Git引用分支(branch), 远程跟踪分支(remote-tracking branch)以及标签(tag)都是对提交的引用. 所有的引用是用”refs”开头, 以斜杠分割的路径. 到目前为此, 我们用到的引用名称其实是它们的简写版本:
+- 分支&quot;test&quot;是&quot;refs/heads/test&quot;的">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Git引用"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">Git引用</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="Git引用">Git引用</h2><p>分支(branch), 远程跟踪分支(remote-tracking branch)以及标签(tag)都是对提交的引用. 所有的引用是用”refs”开头, 以斜杠分割的路径. 到目前为此, 我们用到的引用名称其实是它们的简写版本:</p>
+<pre><code>-<span class="ruby"> 分支<span class="string">"test"</span>是<span class="string">"refs/heads/test"</span>的简写.
+</span>-<span class="ruby"> 标签<span class="string">"v2.6.18"</span>是<span class="string">"refs/tags/v2.6.18"</span>的简写.
+</span>-<span class="ruby"> <span class="string">"origin/master"</span>是<span class="string">"refs/remotes/origin/master"</span>的简写.</span>
+</code></pre><p>偶尔的情况下全名会比较有用, 例如你的标签和分支重名了, 你应该用全名去区分它们.</p>
+<p>(新创建的引用会依据它们的名字存放在.git/refs目录中. 然而, 为了提高效率, 它们也可能被打包到一个文件中, 参见linkgit:git-pack-refs[1]).</p>
+<p>另一个有用的技巧是, 仓库的名字可以代表该仓库的HEAD. 例如, “origin”是访问”origin”中的HEAD分支的一个捷径.</p>
+<p>要了解Git查找引用路径的完全列表, 以及多个同名简写引用的优先级关系, 请参见linkgit:git-rev-parse[1]中的”SPECIFYING REVISIONS”.</p>
+<h3 id="显示某分支特有的提交">显示某分支特有的提交</h3><p>假设你想要查看在”master”分支可达(reachable)但其他任何分支不可达的提交.</p>
+<p>我们可以使用linkgit:git-show-ref[1]列出仓库中所有的头:</p>
+<pre><code>$ git show-ref --heads
+bf<span class="number">62196b5e36</span><span class="number">3d73353a9</span>dcf<span class="number">094c59595</span>f3153b7 refs/heads/core-tutorial
+db<span class="number">768d5504</span>c1bb46f63ee<span class="number">9d6e1772</span>bd047e05bf9 refs/heads/maint
+a07157ac<span class="number">624b2524</span>a<span class="number">059a3414</span>e99f6f44bebc1e7 refs/heads/master
+24dbc180ea14dc1aebe09f14c8ecf<span class="number">32010690627</span> refs/heads/tutorial-2
+<span class="number">1e87486</span>ae<span class="number">06626c2f31</span>eaa63d26fc0fd646c8af2 refs/heads/tutorial-fixes
+</code></pre><p>我们可以使用cut和grep得到”分支-头”(branch-head)部分, 不需要”master”:</p>
+<pre><code>$ git show-<span class="keyword">ref</span> --heads | cut -d' ' -f2 | grep -v '^refs/heads/master'
+refs/heads/core-tutorial
+refs/heads/maint
+refs/heads/tutorial-<span class="number">2</span>
+refs/heads/tutorial-fixes
+</code></pre><p>然后我们就可以查看master中特有的提交:</p>
+<pre><code>$ gitk master --<span class="keyword">not</span> $( git show-<span class="keyword">ref</span> --heads | cut -d' ' -f2 |
+                grep -v '^refs/heads/master' )
+</code></pre><p>很明显上面的命令可以有无数种变种; 例如你想查看仓库中所有的分支可达但标签不可达的提交:</p>
+<pre><code>$ gitk $( git show-<span class="keyword">ref</span> --heads ) --<span class="keyword">not</span>  $( git show-<span class="keyword">ref</span> --tags )
+</code></pre><p>(linkgit:git-rev-parse[1]提供了像”–not”之类的”选择提交”语法的解释.)</p>
+<p>(!!update-ref!!)</p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+	
+		<li class="prev"><a href="/2015/10/7_2/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/7_4/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2015 http://gitbook.liuhui998.com
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>
