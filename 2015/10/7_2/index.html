@@ -1,0 +1,308 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>查看Git对象 | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com/">
+  
+  <meta name="description" content="查看Git对象我们可以使用cat-file命令去查询特定对象的信息. 注意下面只键入了SHA值的一部分, 不必把40个字符全部键入:
+$ git-cat-file -t 54196cc2
+commit
+$ git-cat-file commit 54196cc2
+tree 92b8b694ffb16">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="查看Git对象"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">查看Git对象</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="查看Git对象">查看Git对象</h2><p>我们可以使用cat-file命令去查询特定对象的信息. 注意下面只键入了SHA值的一部分, 不必把40个字符全部键入:</p>
+<pre><code>$ git-cat-file -t <span class="number">54196</span>cc2
+commit
+$ git-cat-file commit <span class="number">54196</span>cc2
+tree <span class="number">92</span>b8b694ffb1675e5975148e1121810081dbdffe
+author J. Bruce Fields &lt;bfields@puzzle.fieldses.org&gt; <span class="number">1143414668</span> -<span class="number">0500</span>
+committer J. Bruce Fields &lt;bfields@puzzle.fieldses.org&gt; <span class="number">1143414668</span> -<span class="number">0500</span>
+
+initial commit
+</code></pre><p>一个树(tree)对象可以引用一个或多个块(blob)对象, 每个块对象都对应一个文件. 更进一步, 树对象亦可以引用其他的树对象, 从而构成一个目录层次结构. 你可以使用ls-tree去查看树的内容:</p>
+<pre><code>$ git ls-tree <span class="number">92b8b694</span>
+100644 blob <span class="number">3b18e512</span>dba<span class="number">79e4c8300</span>dd08aeb<span class="number">37f8e728</span>b8dad    file.txt
+</code></pre><p>我们可以看到树中包含了一个文件. SHA值是文件内容的一个引用(译者注: 相当于指针指向对应的块对象).</p>
+<pre><code>$ git <span class="keyword">cat</span>-<span class="keyword">file</span> -t 3b18e512
+blob
+</code></pre><p>一个”块”(blob)即是文件的数据, 我们可以用cat-file查看其内容:</p>
+<pre><code>$ git <span class="keyword">cat</span>-<span class="keyword">file</span> blob 3b18e512
+hello world
+</code></pre><p>注意到文件中的数据是旧的. 初始树其实是第一次提交时记录的目录状态快照.</p>
+<p>所有的对象都使用SHA1值作为索引存储在git目录之下:</p>
+<pre><code>$ find .git<span class="regexp">/objects/</span>
+.git<span class="regexp">/objects/</span>
+.git<span class="regexp">/objects/</span>pack
+.git<span class="regexp">/objects/</span>info
+.git<span class="regexp">/objects/</span><span class="number">3</span>b
+.git<span class="regexp">/objects/</span><span class="number">3</span>b/<span class="number">18e512</span>dba79e4c8300dd08aeb37f8e728b8dad
+.git<span class="regexp">/objects/</span><span class="number">92</span>
+.git<span class="regexp">/objects/</span><span class="number">92</span>/b8b694ffb1675e5975148e1121810081dbdffe
+.git<span class="regexp">/objects/</span><span class="number">54</span>
+.git<span class="regexp">/objects/</span><span class="number">54</span>/<span class="number">196</span>cc2703dc165cbd373a65a4dcf22d50ae7f7
+.git<span class="regexp">/objects/</span>a0
+.git<span class="regexp">/objects/</span>a0/<span class="number">423896973644771497</span>bdc03eb99d5281615b51
+.git<span class="regexp">/objects/</span>d0
+.git<span class="regexp">/objects/</span>d0/<span class="number">492</span>b368b66bdabf2ac1fd8c92b39d3db916e59
+.git<span class="regexp">/objects/</span>c4
+.git<span class="regexp">/objects/</span>c4/d59f390b9cfd4318117afde11d601c1085f241
+</code></pre><p>这些文件的内容其实是压缩的数据外加一个标注类型和长度的头. 类型可以是块(blob), 树(tree), 提交(commit)或者标签(tag).</p>
+<p>最容易找到提交是HEAD提交, 我们可以在.git/HEAD中找到:</p>
+<pre><code>$ cat .git/<span class="type">HEAD</span>
+<span class="keyword">ref</span>: refs/heads/master
+</code></pre><p>如你所见, 上面的输出告诉了我们现在在哪个分支之上工作. Git通过创建.git目录下的文件去标识分支(译注: 即refs/heads下面的文件, 多个分支会有多个文件). 每个文件中包含了一个提交的SHA1值, 我们可以用cat-file去查看此提交的内容(译注: 此提交即为该分支的头):</p>
+<pre><code>$ cat .git/refs/heads/master
+c<span class="number">4d59f390</span>b9cfd<span class="number">4318117</span>afde<span class="number">11d601c108</span>5f241
+$ git cat-file -t c4d59f39
+commit
+$ git cat-file commit c4d59f39
+tree d<span class="number">0492b368</span>b66bdabf2ac1fd<span class="number">8c92b39d3</span>db916e59
+parent 54196cc2703dc165cbd<span class="number">373a65a4</span>dcf22d50ae7f7
+author J. Bruce Fields &lt;bfields@puzzle.fieldses.org&gt; <span class="number">1143418702</span> -0500
+committer J. Bruce Fields &lt;bfields@puzzle.fieldses.org&gt; <span class="number">1143418702</span> -0500
+
+add emphasis
+</code></pre><p>这里的树对象指向了这棵树的新状态:</p>
+<pre><code>$ git ls-tree d0492b36
+100644 blob a<span class="number">04238969736</span><span class="number">44771497</span>bdc03eb<span class="number">99d5281615</span>b51    file.txt
+$ git cat-file blob a<span class="number">0423896</span>
+hello world!
+</code></pre><p>父对象指向了前一个提交:</p>
+<pre><code>$ git-cat-file commit <span class="number">54196</span>cc2
+tree <span class="number">92</span>b8b694ffb1675e5975148e1121810081dbdffe
+author J. Bruce Fields &lt;bfields@puzzle.fieldses.org&gt; <span class="number">1143414668</span> -<span class="number">0500</span>
+committer J. Bruce Fields &lt;bfields@puzzle.fieldses.org&gt; <span class="number">1143414668</span> -<span class="number">0500</span>
+</code></pre>	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+	
+		<li class="prev"><a href="/2015/10/7_1/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/7_3/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+	欢迎关注<strong>Git小助手</strong>，微信号：git-repo <img src="https://github.com/huangfude/source/blob/master/images/gitrepo.jpg?raw=true" />
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Git和Email | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com/">
+  
+  <meta name="description" content="Git和Email向一个项目提交补丁如果你只做了少量的改动, 最简单的提交方法就是把它们做成补丁(patch)用邮件发出去:
+首先, 使用linkgit:git-format-patch[1]; 例如:
+$ git format-patch origin
+这会在当前目录生成一系统编号的补丁文件, 每">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Git和Email"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">Git和Email</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="Git和Email">Git和Email</h2><h3 id="向一个项目提交补丁">向一个项目提交补丁</h3><p>如果你只做了少量的改动, 最简单的提交方法就是把它们做成补丁(patch)用邮件发出去:</p>
+<p>首先, 使用linkgit:git-format-patch[1]; 例如:</p>
+<pre><code><span class="variable">$ </span>git format-patch origin
+</code></pre><p>这会在当前目录生成一系统编号的补丁文件, 每一个补丁文件都包含了当前分支和origin/HEAD之间的差异内容.</p>
+<p>然后你可以手工把这些文件导入你的Email客户端. 但是如果你需要一次发送很多补丁, 你可能会更喜欢使用linkgit:git-send-email[1]脚本去自动完成这个工作. 在发送之前, 应当先到项目的邮件列表上咨询一下项目管理者, 了解他们管理这些补丁的方式.</p>
+<h3 id="向一个项目中导入补丁">向一个项目中导入补丁</h3><p>Git也提供了一个名为linkgit:git-am[1]的工具(am是”apply mailbox”的缩写)去应用那些通过Email寄来的系列补丁. 你只需要按顺序把所有包含补丁的消息存入单个的mailbox文件, 比如说”patches.mbox”, 然后运行</p>
+<pre><code>$ git am -<span class="number">3</span> patches.mbox
+</code></pre><p>Git会按照顺序应用每一个补丁; 如果发生了冲突, git会停下来让你手工解决冲突从而完成合并. (“-3”选项会让git执行合并操作; 如果你更喜欢中止并且不改动你的工作树和索引, 你可以省略”-3”选项.)</p>
+<p>在解决冲突和更新索引之后, 你不需要再创建一个新提交, 只需要运行</p>
+<pre><code>$ git am <span class="comment">--resolved</span>
+</code></pre><p>这时git会为你创建一个提交, 然后继续应用mailbox中余下的补丁.</p>
+<p>最后的效果是, git产生了一系列提交, 每个提交是原来mailbox中的一个补丁, 补丁中的作者信息和提交日志也一并被记录下来.</p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+	
+		<li class="prev"><a href="/2015/10/5_5/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/5_7/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+	欢迎关注<strong>Git小助手</strong>，微信号：git-repo <img src="https://github.com/huangfude/source/blob/master/images/gitrepo.jpg?raw=true" />
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

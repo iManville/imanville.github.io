@@ -1,0 +1,262 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>查找问题的利器 - Git Blame | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com/">
+  
+  <meta name="description" content="查找问题的利器 - Git Blame如果你要查看文件的每个部分是谁修改的, 那么 linkgit:git-blame[1] 就是不二选择. 只要运行’git blame [filename]’, 你就会得到整个文件的每一行的详细修改信息:包括SHA串,日期和作者:
+译者注: Git采用SHA1做为">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="查找问题的利器 - Git Blame"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">查找问题的利器 - Git Blame</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="查找问题的利器_-_Git_Blame">查找问题的利器 - Git Blame</h2><p>如果你要查看文件的每个部分是谁修改的, 那么 linkgit:git-blame[1] 就是不二选择. 只要运行’git blame [filename]’, 你就会得到整个文件的每一行的详细修改信息:包括SHA串,日期和作者:</p>
+<p>译者注: Git采用SHA1做为hash签名算法, 在本书中,作者为了表达方便,常常使用SHA来代指SHA1. 如果没有特别说明, 本书中的SHA就是SHA1的代称.<br>    $ git blame sha1_file.c<br>    …<br>    0fcfd160 (Linus Torvalds  2005-04-18 13:04:43 -0700    8)  */<br>    0fcfd160 (Linus Torvalds  2005-04-18 13:04:43 -0700    9) #include “cache.h”<br>    1f688557 (Junio C Hamano  2005-06-27 03:35:33 -0700   10) #include “delta.h”<br>    a733cb60 (Linus Torvalds  2005-06-28 14:21:02 -0700   11) #include “pack.h”<br>    8e440259 (Peter Eriksen   2006-04-02 14:44:09 +0200   12) #include “blob.h”<br>    8e440259 (Peter Eriksen   2006-04-02 14:44:09 +0200   13) #include “commit.h”<br>    8e440259 (Peter Eriksen   2006-04-02 14:44:09 +0200   14) #include “tag.h”<br>    8e440259 (Peter Eriksen   2006-04-02 14:44:09 +0200   15) #include “tree.h”<br>    f35a6d3b (Linus Torvalds  2007-04-09 21:20:29 -0700   16) #include “refs.h”<br>    70f5d5d3 (Nicolas Pitre   2008-02-28 00:25:19 -0500   17) #include “pack-revindex.h”628522ec (Junio C Hamano              2007-12-29 02:05:47 -0800   18) #include “sha1-lookup.h”<br>    …</p>
+<p>如果文件被修改了(reverted),或是编译(build)失败了; 这个命令就可以大展身手了.</p>
+<p>你也可以用”-L”参数在命令(blame)中指定开始和结束行:</p>
+<pre><code>$&gt;git blame -L 160,+10 sha1_file.c 
+ace1534d (Junio C Hamano <span class="number">2005-05-07</span> 00:38:04 -0700       160)}
+ace1534d (Junio C Hamano <span class="number">2005-05-07</span> 00:38:04 -0700       161)
+0fcfd160 (Linus Torvalds <span class="number">2005-04-18</span> 13:04:43 -0700       162)/*
+0fcfd160 (Linus Torvalds <span class="number">2005-04-18</span> 13:04:43 -0700       163) * NOTE! This returns a statically allocate
+790296fd (Jim Meyering   <span class="number">2008-01-03</span> 15:18:07 +0100       164) * careful about using it. Do an "xstrdup()
+0fcfd160 (Linus Torvalds <span class="number">2005-04-18</span> 13:04:43 -0700       165) * filename.
+ace1534d (Junio C Hamano <span class="number">2005-05-07</span> 00:38:04 -0700       166) *
+ace1534d (Junio C Hamano <span class="number">2005-05-07</span> 00:38:04 -0700       167) * Also note that this returns the location
+ace1534d (Junio C Hamano <span class="number">2005-05-07</span> 00:38:04 -0700       168) * SHA1 file can happen from any alternate 
+d19938ab (Junio C Hamano <span class="number">2005-05-09</span> 17:57:56 -0700       169) * DB_ENVIRONMENT environment variable if i
+</code></pre>	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+	
+		<li class="prev"><a href="/2015/10/5_4/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2015/10/5_6/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+	欢迎关注<strong>Git小助手</strong>，微信号：git-repo <img src="https://github.com/huangfude/source/blob/master/images/gitrepo.jpg?raw=true" />
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>

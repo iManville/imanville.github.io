@@ -1,0 +1,394 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>子模块 | Git Community Book 中文版</title>
+  <meta name="author" content="http://gitbook.liuhui998.com/">
+  
+  <meta name="description" content="子模块一个大项目通常由很多较小的, 自完备的模块组成. 例如, 一个嵌入式Linux发行版的代码树会包含每个进行过本地修改的软件的代码; 一个电影播放器可能需要基于一个知名解码库的特定版本完成编译; 数个独立的程序可能会共用同一个创建脚本.
+在集中式版本管理系统中, 可以通过把每个模块放在一个单独的">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="子模块"/>
+  <meta property="og:site_name" content="Git Community Book 中文版"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="Git Community Book 中文版" type="application/atom+xml">
+  
+  
+    <link href="/favicon.png" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">Git Community Book 中文版</a><span class="split"></span><span class="title">子模块</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2015-10-21</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  
+
+  
+	<div class="col-md-12">
+	  
+
+	  <!-- content -->
+	  <h2 id="子模块">子模块</h2><p>一个大项目通常由很多较小的, 自完备的模块组成. 例如, 一个嵌入式Linux发行版的代码树会包含每个进行过本地修改的软件的代码; 一个电影播放器可能需要基于一个知名解码库的特定版本完成编译; 数个独立的程序可能会共用同一个创建脚本.</p>
+<p>在集中式版本管理系统中, 可以通过把每个模块放在一个单独的仓库中来完成上述的任务. 开发者可以把所有模块都签出(checkout), 也可以选择只签出他需要的模块. 在移动文件, 修改API和翻译时, 他们甚至可以在一个提交中跨多个模块修改文件.</p>
+<p>Git不允许部分签出(partial checkout), 所以采用上面(集中式版本管理)的方法会强迫开发者们保留一份他们不感兴趣的模块的本地拷贝. 在签出量巨大时, 提交会慢得超过你的预期, 因为git不得不扫描每一个目录去寻找修改. 如果模块有很多本地历史, 克隆可能永远不能完成.</p>
+<p>从好的方面看来, 分布式版本管理系统可以更好地与外部资源进行整合. 在集中化的模式中, 外部项目的一个快照从它本身的版本控制系统中被分离出来, 然后此快照作为一个提供商分支(vendor branch)导入到本地的版本控制系统中去. 快照的历史不再可见. 而分布式管理系统中, 你可以把外部项目的历史一同克隆过来, 从而更好地跟踪外部项目的开发, 便于合并本地修改.</p>
+<p>Git的子模块(submodule)功能使得一个仓库可以用子目录的形式去包含一个外部项目的签出版本. 子模块维护它们自己的身份标记(identity); 子模块功能仅仅储存子模块仓库的位置和提交ID, 因此其他克隆父项目(“superproject”)的开发者可以轻松克隆所有子模块的同一版本. 对父项目的部分签出成为可能: 你可以告诉git去克隆一部分或者所有的子模块, 也可以一个都不克隆.</p>
+<p>Git 1.5.3中加入了linkgit:git-submodule[1]这个命令. Git 1.5.2版本的用户可以查找仓库的子模块并且手工签出; 更早的版本不支持子模块功能.</p>
+<p>为说明子模块的使用方法, 创建4个用作子模块的示例仓库:</p>
+<pre><code>$ mkdir ~/git
+$ cd ~/git
+$ <span class="keyword">for</span> i <span class="keyword">in</span> a b c d
+do
+    mkdir <span class="variable">$i</span>
+    cd <span class="variable">$i</span>
+    git init
+    echo <span class="string">"module $i"</span> &gt; <span class="variable">$i</span>.txt
+    git add <span class="variable">$i</span>.txt
+    git commit -m <span class="string">"Initial commit, submodule $i"</span>
+    cd ..
+done
+</code></pre><p>现在创建父项目, 加入所有的子模块:</p>
+<pre><code><span class="variable">$ </span>mkdir <span class="keyword">super</span>
+<span class="variable">$ </span>cd <span class="keyword">super</span>
+<span class="variable">$ </span>git init
+<span class="variable">$ </span><span class="keyword">for</span> i <span class="keyword">in</span> a b c d
+<span class="keyword">do</span>
+    git submodule add ~<span class="regexp">/git/</span><span class="variable">$i</span> <span class="variable">$i</span>
+done
+</code></pre><p>注意: 如果你想对外发布你的父项目, 请不要使用本地的地址!</p>
+<p>列出<code>git-submodule</code>创建文件:</p>
+<pre><code>$ ls -<span class="tag">a</span>
+.  ..  <span class="class">.git</span>  <span class="class">.gitmodules</span>  <span class="tag">a</span>  <span class="tag">b</span>  c  d
+</code></pre><p><code>git-submodule add</code>命令进行了如下的操作:</p>
+<ul>
+<li>它在当前目录下克隆各个子模块, 默认签出master分支.</li>
+<li>它把子模块的克隆路径加入到linkgit:gitmodules[5]文件中, 然后把这个文件加入到索引, 准备进行提交.</li>
+<li>它把子模块的当前提交ID加入到索引中, 准备进行提交.</li>
+</ul>
+<p>提交父项目:</p>
+<pre><code><span class="char">$ </span>git commit -m <span class="comment">"Add submodules a, b, c and d."</span>
+</code></pre><p>现在克隆父项目:</p>
+<pre><code><span class="variable">$ </span>cd ..
+<span class="variable">$ </span>git clone <span class="keyword">super</span> cloned
+<span class="variable">$ </span>cd cloned
+</code></pre><p>子模块的目录创建好了, 但是它们是空的:</p>
+<pre><code>$ ls -<span class="tag">a</span> <span class="tag">a</span>
+.  ..
+$ git submodule status
+-d266b9873ad50488163457f025db7cdd9683d88b <span class="tag">a</span>
+-e81d457da15309b4fef4249aba9b50187999670d <span class="tag">b</span>
+-c1536a972b9affea0f16e0680ba87332dc059146 c
+-d96249ff5d57de5de093e6baff9e0aafa5276a74 d
+</code></pre><p>注意: 上面列出的提交对象的名字会和你的项目中看到的有所不同, 但是它们应该和HEAD的提交对象名字一致. 你可以运行<code>git ls-remote ../git/a</code>进行检验.</p>
+<p>拉取子模块需要进行两步操作. 首先运行<code>git submodule init</code>, 把子模块的URL加入到<code>.git/config</code>:</p>
+<pre><code>$ git <span class="keyword">submodule </span>init
+</code></pre><p>现在使用<code>git-submodule update</code>去克隆子模块的仓库和签出父项目中指定的那个版本:</p>
+<pre><code>$ git submodule update
+$ cd <span class="tag">a</span>
+$ ls -<span class="tag">a</span>
+.  ..  <span class="class">.git</span>  <span class="tag">a</span>.txt
+</code></pre><p><code>git-submodule update</code>和<code>git-submodule add</code>的一个主要区别就是<code>git-submodule update</code>签出一个指定的提交, 而不是该分支的tip. 它就像签出一个标签(tag): 头指针脱离, 你不在任何一个分支上工作.</p>
+<pre><code>$ git <span class="keyword">branch
+</span>* (no <span class="keyword">branch)
+</span><span class="label">master</span>
+</code></pre><p>如何你需要对子模块进行修改, 同时头指针又是脱离的状态, 那么你应该创建或者签出一个分支, 进行修改, 发布子模块的修改, 然后更新父项目让其引用新的提交:</p>
+<pre><code>$ git checkout <span class="literal">master</span>
+</code></pre><p>或者</p>
+<pre><code>$ git checkout -<span class="tag">b</span> fix-up
+</code></pre><p>然后</p>
+<pre><code>$ echo <span class="string">"adding a line again"</span> &gt;&gt; <span class="tag">a</span><span class="class">.txt</span>
+$ git commit -<span class="tag">a</span> -m <span class="string">"Updated the submodule from within the superproject."</span>
+$ git push
+$ cd ..
+$ git diff
+diff --git a/<span class="tag">a</span> b/<span class="tag">a</span>
+index d266b98..<span class="number">261</span>dfac <span class="number">160000</span>
+--- a/<span class="tag">a</span>
++++ b/<span class="tag">a</span>
+@@ -<span class="number">1</span> +<span class="number">1</span> @@
+-Subproject commit d266b9873ad50488163457f025db7cdd9683d88b
++Subproject commit <span class="number">261</span>dfac35cb99d380eb966e102c1197139f7fa24
+$ git add <span class="tag">a</span>
+$ git commit -m <span class="string">"Updated submodule a."</span>
+$ git push
+</code></pre><p>如果你想要更新子模块, 你应该在<code>git pull</code>之后运行<code>git submodule update</code>.</p>
+<h3 id="子模块方式的陷阱">子模块方式的陷阱</h3><p>你应该总是在发布父项目的修改之前发布子模块修改. 如果你忘记发布子模块的修改, 其他人就无法克隆你的仓库了:</p>
+<pre><code>$ cd ~/git/super/<span class="operator">a</span>
+$ echo i added another <span class="built_in">line</span> <span class="built_in">to</span> this <span class="built_in">file</span> &gt;&gt; <span class="operator">a</span>.txt
+$ git commit -<span class="operator">a</span> -m <span class="string">"doing it wrong this time"</span>
+$ cd ..
+$ git <span class="built_in">add</span> <span class="operator">a</span>
+$ git commit -m <span class="string">"Updated submodule a again."</span>
+$ git push
+$ cd ~/git/cloned
+$ git pull
+$ git submodule update
+error: pathspec <span class="string">'261dfac35cb99d380eb966e102c1197139f7fa24'</span> did <span class="operator">not</span> match <span class="keyword">any</span> <span class="built_in">file</span>(s) known <span class="built_in">to</span> git.
+Did you forget <span class="built_in">to</span> <span class="string">'git add'</span>?
+Unable <span class="built_in">to</span> checkout <span class="string">'261dfac35cb99d380eb966e102c1197139f7fa24'</span> <span class="operator">in</span> submodule path <span class="string">'a'</span>
+</code></pre><p>如果你暂存了一个更新过的子模块, 准备进行手工提交, 注意不要在路径后面加上斜杠. 如果加上了斜杠, git会认为你想要移除那个子模块然后签出那个目录内容到父仓库.</p>
+<pre><code>$ cd ~/git/super/<span class="operator">a</span>
+$ echo i added another <span class="built_in">line</span> <span class="built_in">to</span> this <span class="built_in">file</span> &gt;&gt; <span class="operator">a</span>.txt
+$ git commit -<span class="operator">a</span> -m <span class="string">"doing it wrong this time"</span>
+$ cd ..
+$ git <span class="built_in">add</span> <span class="operator">a</span>/
+$ git status
+<span class="comment"># On branch master</span>
+<span class="comment"># Changes to be committed:</span>
+<span class="comment">#   (use "git reset HEAD &lt;file&gt;..." to unstage)</span>
+<span class="comment">#</span>
+<span class="comment">#       deleted:    a</span>
+<span class="comment">#       new file:   a/a.txt</span>
+<span class="comment">#</span>
+<span class="comment"># Modified submodules:</span>
+<span class="comment">#</span>
+<span class="comment"># * a aa5c351...0000000 (1):</span>
+<span class="comment">#   &lt; Initial commit, submodule a</span>
+<span class="comment">#</span>
+</code></pre><p>为了修正这个错误的操作, 我们应该重置(reset)这个修改, 然后在add的时候不要加上末尾斜杠.</p>
+<pre><code>$ git reset<span class="constant"> HEAD </span>A
+$ git add a
+$ git status
+<span class="preprocessor"># On branch master</span>
+<span class="preprocessor"># Changes to be committed:</span>
+<span class="preprocessor">#   (use "git reset HEAD &lt;file&gt;..." to unstage)</span>
+<span class="preprocessor">#</span>
+<span class="preprocessor">#       modified:   a</span>
+<span class="preprocessor">#</span>
+<span class="preprocessor"># Modified submodules:</span>
+<span class="preprocessor">#</span>
+<span class="preprocessor"># * a aa5c351...8d3ba36 (1):</span>
+<span class="preprocessor">#   &gt; doing it wrong this time</span>
+<span class="preprocessor">#</span>
+</code></pre><p>你也不应该把子模块的分支回退到超出任何父项目中记录的提交的范围.</p>
+<p>如果你在没有签出分支的情况下对子模块进行了修改并且提交, 运行<code>git submodule update</code>将会不安全. 你所进行的修改会在无任何提示的情况下被覆盖.</p>
+<pre><code>$ cat <span class="tag">a</span><span class="class">.txt</span>
+module <span class="tag">a</span>
+$ echo line added from private2 &gt;&gt; <span class="tag">a</span><span class="class">.txt</span>
+$ git commit -<span class="tag">a</span> -m <span class="string">"line added inside private2"</span>
+$ cd ..
+$ git submodule update
+Submodule path <span class="string">'a'</span>: checked out <span class="string">'d266b9873ad50488163457f025db7cdd9683d88b'</span>
+$ cd <span class="tag">a</span>
+$ cat <span class="tag">a</span><span class="class">.txt</span>
+module a
+</code></pre><p>注意: 这些修改在子模块的reflog中仍然可见.</p>
+<p>如果你不想提交你的修改, 那又是另外一种情况了.</p>
+<p><a href="&quot;GitCast #11: Git Submodules&quot;">gitcast:c11-git-submodules</a></p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+		
+	
+		
+			
+			
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+		
+	
+	
+		<li class="prev"><a href="/2015/10/5_9/" class="alignleft prev"><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next disabled"><a>next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+	欢迎关注<strong>Git小助手</strong>，微信号：git-repo <img src="https://github.com/huangfude/source/blob/master/images/gitrepo.jpg?raw=true" />
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>
